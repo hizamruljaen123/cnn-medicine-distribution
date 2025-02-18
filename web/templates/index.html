@@ -1,100 +1,142 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <!-- Plotly.js -->
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
         <title>Admin Dashboard</title>
     </head>
     <body>
-        <!-- Sidebar -->
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <h3>Admin Dashboard</h3>
-            </div>
-            <ul class="list-unstyled components">
-                <li class="active">
-                    <a href="#">Dashboard</a>
-                </li>
-                <li>
-                    <a href="#">Reports</a>
-                </li>
-                <li>
-                    <a href="#">Analytics</a>
-                </li>
-                <li>
-                    <a href="#">Export</a>
-                </li>
+        <nav id="sidebar" class="bg-dark text-white p-3">
+            <h3>Admin Dashboard</h3>
+            <ul class="list-unstyled">
+                <li class="active"><a href="#" class="text-white">Dashboard</a></li>
+                <li><a href="#" class="text-white">Reports</a></li>
+                <li><a href="#" class="text-white">Analytics</a></li>
+                <li><a href="#" class="text-white">Export</a></li>
             </ul>
         </nav>
-        <!-- Page Content -->
-        <div id="content">
-            <div class="container-fluid">
-                <h1 class="mt-4">Clustering Results</h1>
-                <!-- Frequency Bar Chart -->
-                <div class="mt-5">
-                    <h2>Frekuensi Kebutuhan Obat</h2>
-                    <div id="frequency-bar-chart" class="plotly-graph-div"></div>
+        <div id="content" class="container-fluid mt-4">
+            <h1>Clustering Results</h1>
+            <div class="mt-5">
+                <h2>Frekuensi Kebutuhan Obat</h2>
+                <div id="frequency-bar-chart"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Scatter Plot Kebutuhan Obat</h2>
+                    <div id="scatter-plot"></div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <!-- Scatter Plot Visualization -->
-                        <div class="mt-5">
-                            <h2>Scatter Plot Kebutuhan Obat</h2>
-                            <div id="scatter-plot" class="plotly-graph-div"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <!-- TSNE Graph -->
-                        <div class="mt-5">
-                            <h2>Visualisasi TSNE Kebutuhan Obat</h2>
-                            <div id="tsne-graph" class="plotly-graph-div"></div>
-                        </div>
-                    </div>
+                <div class="col-md-6">
+                    <h2>Visualisasi TSNE Kebutuhan Obat</h2>
+                    <div id="tsne-graph"></div>
                 </div>
-                <!-- Clustering Result Table -->
-                <div class="mt-5">
-                    <h2>Tabel Hasil Klusterisasi</h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped" id="clustering-result-table">
-                            <thead>
-                                <!-- Table headers will be inserted here -->
-                            </thead>
-                            <tbody>
-                                <!-- Table data will be inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
+            </div>
+            <h3>Peta Distribusi Kebutuhan Obat</h3>
+            <iframe src="{{ map_path }}" width="100%" height="500px"></iframe>
+
+            <div class="mt-5">
+                <h2>Tabel Hasil Klasterisasi</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped" id="clustering-result-table">
+                        <thead>
+                            <!-- Data header akan diisi oleh JavaScript -->
+                        </thead>
+                        <tbody>
+                            <!-- Data akan dimasukkan dengan JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
-                
-                
-                
             </div>
         </div>
+
         <script>
-        // Frequency Bar Chart
-        var bar_graphJSON = {{ bar_graphJSON|safe }};
-        Plotly.newPlot('frequency-bar-chart', bar_graphJSON.data, bar_graphJSON.layout);
-        // Scatter Plot
-        var scatter_graphJSON = {{ scatter_graphJSON|safe }};
-        Plotly.newPlot('scatter-plot', scatter_graphJSON.data, scatter_graphJSON.layout);
-        // TSNE Graph
-        var tsne_graphJSON = {{ tsne_graphJSON|safe }};
-        Plotly.newPlot('tsne-graph', tsne_graphJSON.data, tsne_graphJSON.layout);
-        // Clustering Result Table
-        var tableData = {{ table_data | safe }};
+            // Data JSON untuk grafik dari backend
+            var bar_graphJSON = {{ bar_graphJSON|safe }};
+            Plotly.newPlot('frequency-bar-chart', bar_graphJSON.data, bar_graphJSON.layout);
+        
+            var scatter_graphJSON = {{ scatter_graphJSON|safe }};
+            Plotly.newPlot('scatter-plot', scatter_graphJSON.data, scatter_graphJSON.layout);
+        
+            var tsne_graphJSON = {{ tsne_graphJSON|safe }};
+            Plotly.newPlot('tsne-graph', tsne_graphJSON.data, tsne_graphJSON.layout);
+        
+            var tableData = {{ table_data | safe }};
+        
+            // Menampilkan tabel hasil klasterisasi
+            document.addEventListener("DOMContentLoaded", function() {
+                var table = document.getElementById("clustering-result-table");
+                var tableHead = table.querySelector("thead");  
+                var tableBody = table.querySelector("tbody");
+
+                // Menghindari duplikasi thead
+                if (tableHead && tableHead.getAttribute("data-initialized") !== "true") {
+                    tableHead.setAttribute("data-initialized", "true");
+                } else if (tableHead) {
+                    tableHead.remove(); 
+                }
+
+                // Mengosongkan tbody dan memasukkan data baru
+                tableBody.innerHTML = "";  
+        
+                tableData.forEach(function(row) {
+                    var tr = document.createElement("tr");
+                    ["id", "nama_obat", "satuan", "stok_awal", "penerimaan", "persediaan", "pemakaian", "sisa_stok", "permintaan", "wilayah", "tahun", "Tingkat_Kebutuhan"].forEach(function(col) {
+                        var td = document.createElement("td");
+                        td.textContent = row[col];
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+            });
+
+            // Mengambil data frekuensi dari backend
+            const frequencyData = JSON.parse('{{ frequency_json | tojson | safe }}');
+
+            // Fungsi untuk menampilkan data frekuensi ketika marker peta diklik
+            function showFrequency(region) {
+                const data = frequencyData[region];
+                if (data) {
+                    let html = `<h3>${region}</h3><ul>`;
+                    data.forEach(item => {
+                        html += `<li>${item.Tingkat_Kebutuhan}: ${item.Frekuensi}</li>`;
+                    });
+                    html += `</ul>`;
+                    document.getElementById('frequencyDetails').innerHTML = html;
+                } else {
+                    document.getElementById('frequencyDetails').innerHTML = `<p>Data tidak ditemukan untuk wilayah ${region}.</p>`;
+                }
+            }
+
+            // Membuat peta menggunakan Leaflet
+            var map = L.map('map-container').setView([0, 0], 5);
+
+            // Menambahkan tile layer dari OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Menambahkan marker ke peta
+            var frequencyPerRegion = {{ frequency_json | safe }};
+            for (const region in frequencyPerRegion) {
+                const data = frequencyPerRegion[region];
+                if (data && data.length > 0) {
+                    const firstData = data[0]; // Ambil data pertama untuk latitude dan longitude
+                    if (firstData.Latitude && firstData.Longitude) {
+                        L.marker([firstData.Latitude, firstData.Longitude])
+                            .bindPopup(`<b>${region}</b><br>${data.map(item => `${item.Tingkat_Kebutuhan}: ${item.Frekuensi}`).join('<br>')}`)
+                            .addTo(map);
+                    }
+                }
+            }
         </script>
-        <!-- Optional JavaScript -->
-        <!-- jQuery and Bootstrap Bundle (includes Popper) -->
+
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Render the plots and table -->
         <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     </body>
 </html>

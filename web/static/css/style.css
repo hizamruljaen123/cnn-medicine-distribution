@@ -116,9 +116,105 @@ body {
     width: 100%;
 }
 
-.table-responsive {
-    animation: fadeInUp 0.5s ease-in-out;
+/* Animasi Fade-in Saat Tabel Muncul */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
+
+/* Styling Tabel */
+.table-responsive {
+    animation: fadeIn 0.8s ease-in-out;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    background: white;
+}
+
+thead {
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    color: white;
+    font-weight: bold;
+}
+
+thead th {
+    padding: 15px;
+    text-align: left;
+}
+
+tbody tr {
+    transition: background 0.3s ease, transform 0.2s ease-in-out;
+}
+
+tbody tr:hover {
+    background: #f0f8ff;
+    transform: scale(1.02);
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Animasi Warna Hover pada Baris */
+@keyframes rowHighlight {
+    0% { background: #f8f9fa; }
+    50% { background: #d1ecf1; }
+    100% { background: #f8f9fa; }
+}
+
+tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+tbody tr:hover {
+    animation: rowHighlight 0.6s ease-in-out;
+}
+
+/* Tombol Interaktif */
+.button {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 10px 0;
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(45deg, #ff4b2b, #ff416c);
+}
+
+/* Responsif */
+@media screen and (max-width: 768px) {
+    table {
+        font-size: 14px;
+    }
+    thead th {
+        padding: 10px;
+    }
+    td {
+        padding: 8px;
+    }
+}
+
 
 @keyframes fadeInUp {
     from {

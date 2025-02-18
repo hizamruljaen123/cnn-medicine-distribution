@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6f63a7ed542063ac807114395de3ce61 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_6f63a7ed542063ac807114395de3ce61" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_6f63a7ed542063ac807114395de3ce61 = L.map(
+                "map_6f63a7ed542063ac807114395de3ce61",
+                {
+                    center: [3.7964035087719306, 98.44937017543863],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 5,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_6fa8549b9ae1f7e203f9cbcd20a9eac2 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_6fa8549b9ae1f7e203f9cbcd20a9eac2.addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var marker_ebee7aa8d3a6f7adaea2ef82ddeba126 = L.marker(
+                [3.5467, 98.2458],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_18c35adef5f573c36a9a7a8bafc67e3e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_ebee7aa8d3a6f7adaea2ef82ddeba126.setIcon(icon_18c35adef5f573c36a9a7a8bafc67e3e);
+        
+    
+        var popup_387833099ff41d4c5dd0af78ae5319a5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e248807d3b1b7e448fc79316a1d91551 = $(`<div id="html_e248807d3b1b7e448fc79316a1d91551" style="width: 100.0%; height: 100.0%;">Bahorok - Cukup (20)</div>`)[0];
+                popup_387833099ff41d4c5dd0af78ae5319a5.setContent(html_e248807d3b1b7e448fc79316a1d91551);
+            
+        
+
+        marker_ebee7aa8d3a6f7adaea2ef82ddeba126.bindPopup(popup_387833099ff41d4c5dd0af78ae5319a5)
+        ;
+
+        
+    
+    
+            marker_ebee7aa8d3a6f7adaea2ef82ddeba126.bindTooltip(
+                `<div>
+                     Bahorok
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_b1900aed43f2e352b677803d9e213100 = L.marker(
+                [3.5467, 98.2458],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_5334d220edbf4a80ddb43811ba1b9c07 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_b1900aed43f2e352b677803d9e213100.setIcon(icon_5334d220edbf4a80ddb43811ba1b9c07);
+        
+    
+        var popup_b1b1e6892a841d0929454cd495ee4b1a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4ee40d751924e4e306f51eb0b82970a2 = $(`<div id="html_4ee40d751924e4e306f51eb0b82970a2" style="width: 100.0%; height: 100.0%;">Bahorok - Rendah (1)</div>`)[0];
+                popup_b1b1e6892a841d0929454cd495ee4b1a.setContent(html_4ee40d751924e4e306f51eb0b82970a2);
+            
+        
+
+        marker_b1900aed43f2e352b677803d9e213100.bindPopup(popup_b1b1e6892a841d0929454cd495ee4b1a)
+        ;
+
+        
+    
+    
+            marker_b1900aed43f2e352b677803d9e213100.bindTooltip(
+                `<div>
+                     Bahorok
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_09b88f944e410d1ce990aff472b523f9 = L.marker(
+                [3.5467, 98.2458],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_a383a642082b18dc812a29db4f6eb577 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_09b88f944e410d1ce990aff472b523f9.setIcon(icon_a383a642082b18dc812a29db4f6eb577);
+        
+    
+        var popup_889567a8b4045bf6c90e5b1b7b0d5bf6 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c6cbd83bca46276ecda310870a85dfb0 = $(`<div id="html_c6cbd83bca46276ecda310870a85dfb0" style="width: 100.0%; height: 100.0%;">Bahorok - Sangat Tinggi (3)</div>`)[0];
+                popup_889567a8b4045bf6c90e5b1b7b0d5bf6.setContent(html_c6cbd83bca46276ecda310870a85dfb0);
+            
+        
+
+        marker_09b88f944e410d1ce990aff472b523f9.bindPopup(popup_889567a8b4045bf6c90e5b1b7b0d5bf6)
+        ;
+
+        
+    
+    
+            marker_09b88f944e410d1ce990aff472b523f9.bindTooltip(
+                `<div>
+                     Bahorok
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_48b88c576004484701b7a06b68ac149c = L.marker(
+                [3.5467, 98.2458],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_d3f1dabb099165cc43ea36c27da910b6 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_48b88c576004484701b7a06b68ac149c.setIcon(icon_d3f1dabb099165cc43ea36c27da910b6);
+        
+    
+        var popup_4d41f69465aff31c7885d31c790dfa2d = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_98b343251ccffe098f4cf19cd64abf5a = $(`<div id="html_98b343251ccffe098f4cf19cd64abf5a" style="width: 100.0%; height: 100.0%;">Bahorok - Tinggi (26)</div>`)[0];
+                popup_4d41f69465aff31c7885d31c790dfa2d.setContent(html_98b343251ccffe098f4cf19cd64abf5a);
+            
+        
+
+        marker_48b88c576004484701b7a06b68ac149c.bindPopup(popup_4d41f69465aff31c7885d31c790dfa2d)
+        ;
+
+        
+    
+    
+            marker_48b88c576004484701b7a06b68ac149c.bindTooltip(
+                `<div>
+                     Bahorok
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_b84fb17d1acdf4a12a895ba8230475f7 = L.marker(
+                [4.1455, 98.2562],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_5035bcb51c151fd59ba9f41228e697c4 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_b84fb17d1acdf4a12a895ba8230475f7.setIcon(icon_5035bcb51c151fd59ba9f41228e697c4);
+        
+    
+        var popup_da034caf9b1f57d3aba23fade1579bbe = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6675775d8cade1bece18ac21acbe00f8 = $(`<div id="html_6675775d8cade1bece18ac21acbe00f8" style="width: 100.0%; height: 100.0%;">Besitang - Cukup (19)</div>`)[0];
+                popup_da034caf9b1f57d3aba23fade1579bbe.setContent(html_6675775d8cade1bece18ac21acbe00f8);
+            
+        
+
+        marker_b84fb17d1acdf4a12a895ba8230475f7.bindPopup(popup_da034caf9b1f57d3aba23fade1579bbe)
+        ;
+
+        
+    
+    
+            marker_b84fb17d1acdf4a12a895ba8230475f7.bindTooltip(
+                `<div>
+                     Besitang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_a46d63bbd53cb5d89e8543e7c5105d85 = L.marker(
+                [4.1455, 98.2562],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_02fa8fd625ec69faed7a97bc020ab1d7 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_a46d63bbd53cb5d89e8543e7c5105d85.setIcon(icon_02fa8fd625ec69faed7a97bc020ab1d7);
+        
+    
+        var popup_4a61b60f4d41ae814405f2617f5439fc = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_14c63087945a8d418b6fc11b0080a83e = $(`<div id="html_14c63087945a8d418b6fc11b0080a83e" style="width: 100.0%; height: 100.0%;">Besitang - Rendah (1)</div>`)[0];
+                popup_4a61b60f4d41ae814405f2617f5439fc.setContent(html_14c63087945a8d418b6fc11b0080a83e);
+            
+        
+
+        marker_a46d63bbd53cb5d89e8543e7c5105d85.bindPopup(popup_4a61b60f4d41ae814405f2617f5439fc)
+        ;
+
+        
+    
+    
+            marker_a46d63bbd53cb5d89e8543e7c5105d85.bindTooltip(
+                `<div>
+                     Besitang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_127567d34deffef3895067675671f0f8 = L.marker(
+                [4.1455, 98.2562],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_f9f754c2b0217830c2e951a7c13ad1b8 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_127567d34deffef3895067675671f0f8.setIcon(icon_f9f754c2b0217830c2e951a7c13ad1b8);
+        
+    
+        var popup_829a232872344010d62b66c90d104353 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b0523ac1a4f0e327343e334e2cb17760 = $(`<div id="html_b0523ac1a4f0e327343e334e2cb17760" style="width: 100.0%; height: 100.0%;">Besitang - Sangat Tinggi (4)</div>`)[0];
+                popup_829a232872344010d62b66c90d104353.setContent(html_b0523ac1a4f0e327343e334e2cb17760);
+            
+        
+
+        marker_127567d34deffef3895067675671f0f8.bindPopup(popup_829a232872344010d62b66c90d104353)
+        ;
+
+        
+    
+    
+            marker_127567d34deffef3895067675671f0f8.bindTooltip(
+                `<div>
+                     Besitang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1bab01d288f5fc59a62add70c4d1ade4 = L.marker(
+                [4.1455, 98.2562],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_5bf606ec2ba0ee21ec99a4b0e1ffd54c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_1bab01d288f5fc59a62add70c4d1ade4.setIcon(icon_5bf606ec2ba0ee21ec99a4b0e1ffd54c);
+        
+    
+        var popup_d0d05b53f7a65d6446dce1cd6396a229 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_cfae6e857f095602ed7419de67600400 = $(`<div id="html_cfae6e857f095602ed7419de67600400" style="width: 100.0%; height: 100.0%;">Besitang - Tinggi (26)</div>`)[0];
+                popup_d0d05b53f7a65d6446dce1cd6396a229.setContent(html_cfae6e857f095602ed7419de67600400);
+            
+        
+
+        marker_1bab01d288f5fc59a62add70c4d1ade4.bindPopup(popup_d0d05b53f7a65d6446dce1cd6396a229)
+        ;
+
+        
+    
+    
+            marker_1bab01d288f5fc59a62add70c4d1ade4.bindTooltip(
+                `<div>
+                     Besitang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_97bdc6ec61ba3a2e08cf4e2342bf2694 = L.marker(
+                [3.5422, 98.5689],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_5e24b995bb0ee98771d201bbd8b2b10a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_97bdc6ec61ba3a2e08cf4e2342bf2694.setIcon(icon_5e24b995bb0ee98771d201bbd8b2b10a);
+        
+    
+        var popup_8c4792272e304098e8dade6f93884cf2 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_68ba2cd825bedf46794e65137401ae6b = $(`<div id="html_68ba2cd825bedf46794e65137401ae6b" style="width: 100.0%; height: 100.0%;">Bukit Lawang - Cukup (20)</div>`)[0];
+                popup_8c4792272e304098e8dade6f93884cf2.setContent(html_68ba2cd825bedf46794e65137401ae6b);
+            
+        
+
+        marker_97bdc6ec61ba3a2e08cf4e2342bf2694.bindPopup(popup_8c4792272e304098e8dade6f93884cf2)
+        ;
+
+        
+    
+    
+            marker_97bdc6ec61ba3a2e08cf4e2342bf2694.bindTooltip(
+                `<div>
+                     Bukit Lawang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_49862ad9fd70ee32f35e12236e17b721 = L.marker(
+                [3.5422, 98.5689],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_eaa732ceddbf60208476fa962a723457 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_49862ad9fd70ee32f35e12236e17b721.setIcon(icon_eaa732ceddbf60208476fa962a723457);
+        
+    
+        var popup_4723b2ff80aeb79e04dcf1c577821b46 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_20e3ffb2016c79b51e5f7f1c48120027 = $(`<div id="html_20e3ffb2016c79b51e5f7f1c48120027" style="width: 100.0%; height: 100.0%;">Bukit Lawang - Rendah (1)</div>`)[0];
+                popup_4723b2ff80aeb79e04dcf1c577821b46.setContent(html_20e3ffb2016c79b51e5f7f1c48120027);
+            
+        
+
+        marker_49862ad9fd70ee32f35e12236e17b721.bindPopup(popup_4723b2ff80aeb79e04dcf1c577821b46)
+        ;
+
+        
+    
+    
+            marker_49862ad9fd70ee32f35e12236e17b721.bindTooltip(
+                `<div>
+                     Bukit Lawang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_efd0c017a7b4d9c62dbe91f7014d195a = L.marker(
+                [3.5422, 98.5689],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_d69e748bffa9350f28a8de434a98e9b9 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_efd0c017a7b4d9c62dbe91f7014d195a.setIcon(icon_d69e748bffa9350f28a8de434a98e9b9);
+        
+    
+        var popup_4a38871cd97a3a53dadb9abc603db10d = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d18ee8eae623429c94c267cd7a5d97d7 = $(`<div id="html_d18ee8eae623429c94c267cd7a5d97d7" style="width: 100.0%; height: 100.0%;">Bukit Lawang - Sangat Tinggi (2)</div>`)[0];
+                popup_4a38871cd97a3a53dadb9abc603db10d.setContent(html_d18ee8eae623429c94c267cd7a5d97d7);
+            
+        
+
+        marker_efd0c017a7b4d9c62dbe91f7014d195a.bindPopup(popup_4a38871cd97a3a53dadb9abc603db10d)
+        ;
+
+        
+    
+    
+            marker_efd0c017a7b4d9c62dbe91f7014d195a.bindTooltip(
+                `<div>
+                     Bukit Lawang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_4e5334215514e219d6dd6e32275f4939 = L.marker(
+                [3.5422, 98.5689],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_209ed9c600ec7110de5c32833842fa23 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_4e5334215514e219d6dd6e32275f4939.setIcon(icon_209ed9c600ec7110de5c32833842fa23);
+        
+    
+        var popup_1cc61e8d583e89818d92e899eb855b50 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9e50c8bb1a9fba1e5679bb946b02999c = $(`<div id="html_9e50c8bb1a9fba1e5679bb946b02999c" style="width: 100.0%; height: 100.0%;">Bukit Lawang - Tinggi (27)</div>`)[0];
+                popup_1cc61e8d583e89818d92e899eb855b50.setContent(html_9e50c8bb1a9fba1e5679bb946b02999c);
+            
+        
+
+        marker_4e5334215514e219d6dd6e32275f4939.bindPopup(popup_1cc61e8d583e89818d92e899eb855b50)
+        ;
+
+        
+    
+    
+            marker_4e5334215514e219d6dd6e32275f4939.bindTooltip(
+                `<div>
+                     Bukit Lawang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ce17ff44498267037eeb4cc257521098 = L.marker(
+                [4.0898, 98.3182],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_30c26a82fbebf0787e88cb0c4ae6045f = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_ce17ff44498267037eeb4cc257521098.setIcon(icon_30c26a82fbebf0787e88cb0c4ae6045f);
+        
+    
+        var popup_cab6c896e5e8cefdecbbc6dd6417fb50 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_41a961ea66a666df63e07e28541a2a1b = $(`<div id="html_41a961ea66a666df63e07e28541a2a1b" style="width: 100.0%; height: 100.0%;">Gebang - Cukup (24)</div>`)[0];
+                popup_cab6c896e5e8cefdecbbc6dd6417fb50.setContent(html_41a961ea66a666df63e07e28541a2a1b);
+            
+        
+
+        marker_ce17ff44498267037eeb4cc257521098.bindPopup(popup_cab6c896e5e8cefdecbbc6dd6417fb50)
+        ;
+
+        
+    
+    
+            marker_ce17ff44498267037eeb4cc257521098.bindTooltip(
+                `<div>
+                     Gebang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_be8ba39b3bbc629c3aadd312dcecdfaa = L.marker(
+                [4.0898, 98.3182],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_ab13130080328dd074dbcb7ee9712c98 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_be8ba39b3bbc629c3aadd312dcecdfaa.setIcon(icon_ab13130080328dd074dbcb7ee9712c98);
+        
+    
+        var popup_3ff8fae76369d9818fc4f9893d03e751 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b226e6248cb025a08076f88dd8eb254e = $(`<div id="html_b226e6248cb025a08076f88dd8eb254e" style="width: 100.0%; height: 100.0%;">Gebang - Rendah (1)</div>`)[0];
+                popup_3ff8fae76369d9818fc4f9893d03e751.setContent(html_b226e6248cb025a08076f88dd8eb254e);
+            
+        
+
+        marker_be8ba39b3bbc629c3aadd312dcecdfaa.bindPopup(popup_3ff8fae76369d9818fc4f9893d03e751)
+        ;
+
+        
+    
+    
+            marker_be8ba39b3bbc629c3aadd312dcecdfaa.bindTooltip(
+                `<div>
+                     Gebang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_f5f4a9b725229e163140198101aab2f2 = L.marker(
+                [4.0898, 98.3182],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_2b6f770e30b8dc523ceb379224859bc4 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_f5f4a9b725229e163140198101aab2f2.setIcon(icon_2b6f770e30b8dc523ceb379224859bc4);
+        
+    
+        var popup_f6a3beee44c22b2bc821ee29d139f8ff = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9369be466ddcc7bd8baf991b0422e63e = $(`<div id="html_9369be466ddcc7bd8baf991b0422e63e" style="width: 100.0%; height: 100.0%;">Gebang - Sangat Tinggi (5)</div>`)[0];
+                popup_f6a3beee44c22b2bc821ee29d139f8ff.setContent(html_9369be466ddcc7bd8baf991b0422e63e);
+            
+        
+
+        marker_f5f4a9b725229e163140198101aab2f2.bindPopup(popup_f6a3beee44c22b2bc821ee29d139f8ff)
+        ;
+
+        
+    
+    
+            marker_f5f4a9b725229e163140198101aab2f2.bindTooltip(
+                `<div>
+                     Gebang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_00d701f1ecc3f1d0e3826db1b726e48e = L.marker(
+                [4.0898, 98.3182],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_9932f14723e963190bea20bef3ed9f45 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_00d701f1ecc3f1d0e3826db1b726e48e.setIcon(icon_9932f14723e963190bea20bef3ed9f45);
+        
+    
+        var popup_dd927dc0893ad7d0cef84bc0233a2487 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_1a12a34297dca894db668c3be3b76012 = $(`<div id="html_1a12a34297dca894db668c3be3b76012" style="width: 100.0%; height: 100.0%;">Gebang - Tinggi (20)</div>`)[0];
+                popup_dd927dc0893ad7d0cef84bc0233a2487.setContent(html_1a12a34297dca894db668c3be3b76012);
+            
+        
+
+        marker_00d701f1ecc3f1d0e3826db1b726e48e.bindPopup(popup_dd927dc0893ad7d0cef84bc0233a2487)
+        ;
+
+        
+    
+    
+            marker_00d701f1ecc3f1d0e3826db1b726e48e.bindTooltip(
+                `<div>
+                     Gebang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_703f30d085fac985aa5aab6cc623a0b4 = L.marker(
+                [3.7583, 98.6658],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_8ea90a45272ee9fde3845490dabf50b3 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_703f30d085fac985aa5aab6cc623a0b4.setIcon(icon_8ea90a45272ee9fde3845490dabf50b3);
+        
+    
+        var popup_defdad951325e7554140a492f74b49f5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6a48663cf758159462cc20587f294f98 = $(`<div id="html_6a48663cf758159462cc20587f294f98" style="width: 100.0%; height: 100.0%;">Kuala - Cukup (16)</div>`)[0];
+                popup_defdad951325e7554140a492f74b49f5.setContent(html_6a48663cf758159462cc20587f294f98);
+            
+        
+
+        marker_703f30d085fac985aa5aab6cc623a0b4.bindPopup(popup_defdad951325e7554140a492f74b49f5)
+        ;
+
+        
+    
+    
+            marker_703f30d085fac985aa5aab6cc623a0b4.bindTooltip(
+                `<div>
+                     Kuala
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_fb0801d6cd9656cf5c169aa373e30167 = L.marker(
+                [3.7583, 98.6658],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_b115dc08f9ae9e33b697a02f6aab45ff = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_fb0801d6cd9656cf5c169aa373e30167.setIcon(icon_b115dc08f9ae9e33b697a02f6aab45ff);
+        
+    
+        var popup_e91245ac3f8399372793a554c8da81b1 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_54e4de33e90ea06617e42d5db16efa1f = $(`<div id="html_54e4de33e90ea06617e42d5db16efa1f" style="width: 100.0%; height: 100.0%;">Kuala - Rendah (1)</div>`)[0];
+                popup_e91245ac3f8399372793a554c8da81b1.setContent(html_54e4de33e90ea06617e42d5db16efa1f);
+            
+        
+
+        marker_fb0801d6cd9656cf5c169aa373e30167.bindPopup(popup_e91245ac3f8399372793a554c8da81b1)
+        ;
+
+        
+    
+    
+            marker_fb0801d6cd9656cf5c169aa373e30167.bindTooltip(
+                `<div>
+                     Kuala
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ca5645acae23f94dd49a7e74ee952caf = L.marker(
+                [3.7583, 98.6658],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_4d47a7ac65bb5b7fcba3d646613643f8 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_ca5645acae23f94dd49a7e74ee952caf.setIcon(icon_4d47a7ac65bb5b7fcba3d646613643f8);
+        
+    
+        var popup_0ca9417a9fcd183e18191374706c9b02 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_93fd50d667c6e7491ee89829d80f7455 = $(`<div id="html_93fd50d667c6e7491ee89829d80f7455" style="width: 100.0%; height: 100.0%;">Kuala - Sangat Tinggi (1)</div>`)[0];
+                popup_0ca9417a9fcd183e18191374706c9b02.setContent(html_93fd50d667c6e7491ee89829d80f7455);
+            
+        
+
+        marker_ca5645acae23f94dd49a7e74ee952caf.bindPopup(popup_0ca9417a9fcd183e18191374706c9b02)
+        ;
+
+        
+    
+    
+            marker_ca5645acae23f94dd49a7e74ee952caf.bindTooltip(
+                `<div>
+                     Kuala
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1d4e536331f187b7306ba75ac14c5f72 = L.marker(
+                [3.7583, 98.6658],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_61039a9c19460d20bce0db1c699f5974 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_1d4e536331f187b7306ba75ac14c5f72.setIcon(icon_61039a9c19460d20bce0db1c699f5974);
+        
+    
+        var popup_763f878db34d8af2f3f30b4989d2677a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_308bdfa60a78be1478d6df5dbbb1673c = $(`<div id="html_308bdfa60a78be1478d6df5dbbb1673c" style="width: 100.0%; height: 100.0%;">Kuala - Tinggi (32)</div>`)[0];
+                popup_763f878db34d8af2f3f30b4989d2677a.setContent(html_308bdfa60a78be1478d6df5dbbb1673c);
+            
+        
+
+        marker_1d4e536331f187b7306ba75ac14c5f72.bindPopup(popup_763f878db34d8af2f3f30b4989d2677a)
+        ;
+
+        
+    
+    
+            marker_1d4e536331f187b7306ba75ac14c5f72.bindTooltip(
+                `<div>
+                     Kuala
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_bc67f63cf34d4379647152675b18f60b = L.marker(
+                [3.6194, 98.5442],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_5685107542439f6cff65d39a71086284 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_bc67f63cf34d4379647152675b18f60b.setIcon(icon_5685107542439f6cff65d39a71086284);
+        
+    
+        var popup_3a19efd3e6612e10b73f61eaf9d71beb = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_593b771d2253222f726d6858026403bc = $(`<div id="html_593b771d2253222f726d6858026403bc" style="width: 100.0%; height: 100.0%;">Marike - Cukup (20)</div>`)[0];
+                popup_3a19efd3e6612e10b73f61eaf9d71beb.setContent(html_593b771d2253222f726d6858026403bc);
+            
+        
+
+        marker_bc67f63cf34d4379647152675b18f60b.bindPopup(popup_3a19efd3e6612e10b73f61eaf9d71beb)
+        ;
+
+        
+    
+    
+            marker_bc67f63cf34d4379647152675b18f60b.bindTooltip(
+                `<div>
+                     Marike
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_3c7d4f19f5621d1cb814b311e573fcc3 = L.marker(
+                [3.6194, 98.5442],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_87b571483ec8f4f29615c6bd9b37f6d5 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_3c7d4f19f5621d1cb814b311e573fcc3.setIcon(icon_87b571483ec8f4f29615c6bd9b37f6d5);
+        
+    
+        var popup_0563aea793133415088bf29e9e45f2f7 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9a9b501e3a5813ab4448a1c06acb86af = $(`<div id="html_9a9b501e3a5813ab4448a1c06acb86af" style="width: 100.0%; height: 100.0%;">Marike - Rendah (1)</div>`)[0];
+                popup_0563aea793133415088bf29e9e45f2f7.setContent(html_9a9b501e3a5813ab4448a1c06acb86af);
+            
+        
+
+        marker_3c7d4f19f5621d1cb814b311e573fcc3.bindPopup(popup_0563aea793133415088bf29e9e45f2f7)
+        ;
+
+        
+    
+    
+            marker_3c7d4f19f5621d1cb814b311e573fcc3.bindTooltip(
+                `<div>
+                     Marike
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_4ad03e5f2c5421d090f222563d13fb4d = L.marker(
+                [3.6194, 98.5442],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_75c3275e1a29182f2035e3f8d8b53c07 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_4ad03e5f2c5421d090f222563d13fb4d.setIcon(icon_75c3275e1a29182f2035e3f8d8b53c07);
+        
+    
+        var popup_9770722b107d96f97d0f09e5c04d1e22 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2aaee8609614df360dc83ae2bee9cd5b = $(`<div id="html_2aaee8609614df360dc83ae2bee9cd5b" style="width: 100.0%; height: 100.0%;">Marike - Sangat Tinggi (2)</div>`)[0];
+                popup_9770722b107d96f97d0f09e5c04d1e22.setContent(html_2aaee8609614df360dc83ae2bee9cd5b);
+            
+        
+
+        marker_4ad03e5f2c5421d090f222563d13fb4d.bindPopup(popup_9770722b107d96f97d0f09e5c04d1e22)
+        ;
+
+        
+    
+    
+            marker_4ad03e5f2c5421d090f222563d13fb4d.bindTooltip(
+                `<div>
+                     Marike
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_4d6184df2ef2f47374870c5869331536 = L.marker(
+                [3.6194, 98.5442],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_ab4609f7f7920b281271f838d6c984a0 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_4d6184df2ef2f47374870c5869331536.setIcon(icon_ab4609f7f7920b281271f838d6c984a0);
+        
+    
+        var popup_cd40e187179a4ea450b5f46b43ad4500 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_7609cf49581348f482c3fc42508c4e98 = $(`<div id="html_7609cf49581348f482c3fc42508c4e98" style="width: 100.0%; height: 100.0%;">Marike - Tinggi (27)</div>`)[0];
+                popup_cd40e187179a4ea450b5f46b43ad4500.setContent(html_7609cf49581348f482c3fc42508c4e98);
+            
+        
+
+        marker_4d6184df2ef2f47374870c5869331536.bindPopup(popup_cd40e187179a4ea450b5f46b43ad4500)
+        ;
+
+        
+    
+    
+            marker_4d6184df2ef2f47374870c5869331536.bindTooltip(
+                `<div>
+                     Marike
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9ff50ce0615dc899c003f265d8508069 = L.marker(
+                [3.9458, 98.2392],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_9a42075e9cff0f404e50d118326b76d9 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_9ff50ce0615dc899c003f265d8508069.setIcon(icon_9a42075e9cff0f404e50d118326b76d9);
+        
+    
+        var popup_a49e81c4287d78270402f05a3b034665 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3e034b9326db2fea6fd1aa3d8a6d0db7 = $(`<div id="html_3e034b9326db2fea6fd1aa3d8a6d0db7" style="width: 100.0%; height: 100.0%;">Namu Ujung - Cukup (26)</div>`)[0];
+                popup_a49e81c4287d78270402f05a3b034665.setContent(html_3e034b9326db2fea6fd1aa3d8a6d0db7);
+            
+        
+
+        marker_9ff50ce0615dc899c003f265d8508069.bindPopup(popup_a49e81c4287d78270402f05a3b034665)
+        ;
+
+        
+    
+    
+            marker_9ff50ce0615dc899c003f265d8508069.bindTooltip(
+                `<div>
+                     Namu Ujung
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_07c5ff6e4950ea8c7ed97b44bfdbbbc5 = L.marker(
+                [3.9458, 98.2392],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_8cf339ab8857f4d87b129fcb61fd02c4 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_07c5ff6e4950ea8c7ed97b44bfdbbbc5.setIcon(icon_8cf339ab8857f4d87b129fcb61fd02c4);
+        
+    
+        var popup_54dd758fd8a48e17834184cb1a94d56a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2db45424509d5b06a3d452c0e93612f3 = $(`<div id="html_2db45424509d5b06a3d452c0e93612f3" style="width: 100.0%; height: 100.0%;">Namu Ujung - Sangat Tinggi (10)</div>`)[0];
+                popup_54dd758fd8a48e17834184cb1a94d56a.setContent(html_2db45424509d5b06a3d452c0e93612f3);
+            
+        
+
+        marker_07c5ff6e4950ea8c7ed97b44bfdbbbc5.bindPopup(popup_54dd758fd8a48e17834184cb1a94d56a)
+        ;
+
+        
+    
+    
+            marker_07c5ff6e4950ea8c7ed97b44bfdbbbc5.bindTooltip(
+                `<div>
+                     Namu Ujung
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_bb2a89909d04af97b038775fa7442487 = L.marker(
+                [3.9458, 98.2392],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_9f82fee937dc8663e1a5a472793e0d0c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_bb2a89909d04af97b038775fa7442487.setIcon(icon_9f82fee937dc8663e1a5a472793e0d0c);
+        
+    
+        var popup_e8cf93f00090458eb6fe98c83a41459b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_30e8a0a4858801e22ba6a9978d18d8ac = $(`<div id="html_30e8a0a4858801e22ba6a9978d18d8ac" style="width: 100.0%; height: 100.0%;">Namu Ujung - Tinggi (14)</div>`)[0];
+                popup_e8cf93f00090458eb6fe98c83a41459b.setContent(html_30e8a0a4858801e22ba6a9978d18d8ac);
+            
+        
+
+        marker_bb2a89909d04af97b038775fa7442487.bindPopup(popup_e8cf93f00090458eb6fe98c83a41459b)
+        ;
+
+        
+    
+    
+            marker_bb2a89909d04af97b038775fa7442487.bindTooltip(
+                `<div>
+                     Namu Ujung
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_565c731931df741c7253f64125b9e275 = L.marker(
+                [4.1167, 98.1333],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_c36e3e73327426173d3dfebc4a6ae972 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_565c731931df741c7253f64125b9e275.setIcon(icon_c36e3e73327426173d3dfebc4a6ae972);
+        
+    
+        var popup_193bc21a438982a4c857d356ca4968ba = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c9637f1227ccc5bc26894a06b7c4871a = $(`<div id="html_c9637f1227ccc5bc26894a06b7c4871a" style="width: 100.0%; height: 100.0%;">Pangkalan Susu - Cukup (18)</div>`)[0];
+                popup_193bc21a438982a4c857d356ca4968ba.setContent(html_c9637f1227ccc5bc26894a06b7c4871a);
+            
+        
+
+        marker_565c731931df741c7253f64125b9e275.bindPopup(popup_193bc21a438982a4c857d356ca4968ba)
+        ;
+
+        
+    
+    
+            marker_565c731931df741c7253f64125b9e275.bindTooltip(
+                `<div>
+                     Pangkalan Susu
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1d67c7c5958cdc6379cce41d46f60d06 = L.marker(
+                [4.1167, 98.1333],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_046c0f412f0b42052f9beea22c7f7ace = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_1d67c7c5958cdc6379cce41d46f60d06.setIcon(icon_046c0f412f0b42052f9beea22c7f7ace);
+        
+    
+        var popup_9f95ef4317e1645c01f7f6db6a8af47c = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e731580bae908116a6b87a5a7b40f77a = $(`<div id="html_e731580bae908116a6b87a5a7b40f77a" style="width: 100.0%; height: 100.0%;">Pangkalan Susu - Rendah (1)</div>`)[0];
+                popup_9f95ef4317e1645c01f7f6db6a8af47c.setContent(html_e731580bae908116a6b87a5a7b40f77a);
+            
+        
+
+        marker_1d67c7c5958cdc6379cce41d46f60d06.bindPopup(popup_9f95ef4317e1645c01f7f6db6a8af47c)
+        ;
+
+        
+    
+    
+            marker_1d67c7c5958cdc6379cce41d46f60d06.bindTooltip(
+                `<div>
+                     Pangkalan Susu
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_79a068ed413793c44b1003710b973088 = L.marker(
+                [4.1167, 98.1333],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_3dc78fb7060bab4d5c60e552562b4f84 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_79a068ed413793c44b1003710b973088.setIcon(icon_3dc78fb7060bab4d5c60e552562b4f84);
+        
+    
+        var popup_6d0bf5a81d1290b95d1cac29ce673190 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_ad0fd246133ba651b013e7170137c7e1 = $(`<div id="html_ad0fd246133ba651b013e7170137c7e1" style="width: 100.0%; height: 100.0%;">Pangkalan Susu - Sangat Tinggi (2)</div>`)[0];
+                popup_6d0bf5a81d1290b95d1cac29ce673190.setContent(html_ad0fd246133ba651b013e7170137c7e1);
+            
+        
+
+        marker_79a068ed413793c44b1003710b973088.bindPopup(popup_6d0bf5a81d1290b95d1cac29ce673190)
+        ;
+
+        
+    
+    
+            marker_79a068ed413793c44b1003710b973088.bindTooltip(
+                `<div>
+                     Pangkalan Susu
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_2d50a7cc6010a6da716bd5bb330f8593 = L.marker(
+                [4.1167, 98.1333],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_4dd7a1f112552fd92ad477484ba67f74 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_2d50a7cc6010a6da716bd5bb330f8593.setIcon(icon_4dd7a1f112552fd92ad477484ba67f74);
+        
+    
+        var popup_41082fc3882ccb4f87fc826fc0089002 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_474dee9465c625536de619511883541f = $(`<div id="html_474dee9465c625536de619511883541f" style="width: 100.0%; height: 100.0%;">Pangkalan Susu - Tinggi (29)</div>`)[0];
+                popup_41082fc3882ccb4f87fc826fc0089002.setContent(html_474dee9465c625536de619511883541f);
+            
+        
+
+        marker_2d50a7cc6010a6da716bd5bb330f8593.bindPopup(popup_41082fc3882ccb4f87fc826fc0089002)
+        ;
+
+        
+    
+    
+            marker_2d50a7cc6010a6da716bd5bb330f8593.bindTooltip(
+                `<div>
+                     Pangkalan Susu
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_a7e552fb9bfa166c412c7447b785a115 = L.marker(
+                [3.7833, 98.7167],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_c3ac1d87e76d1cec9b87eac0c80a0b80 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_a7e552fb9bfa166c412c7447b785a115.setIcon(icon_c3ac1d87e76d1cec9b87eac0c80a0b80);
+        
+    
+        var popup_279129f97bed51bee5a21323d0b498bd = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_1a1650189376762475b6b21f18969c28 = $(`<div id="html_1a1650189376762475b6b21f18969c28" style="width: 100.0%; height: 100.0%;">Pematang Jaya - Cukup (22)</div>`)[0];
+                popup_279129f97bed51bee5a21323d0b498bd.setContent(html_1a1650189376762475b6b21f18969c28);
+            
+        
+
+        marker_a7e552fb9bfa166c412c7447b785a115.bindPopup(popup_279129f97bed51bee5a21323d0b498bd)
+        ;
+
+        
+    
+    
+            marker_a7e552fb9bfa166c412c7447b785a115.bindTooltip(
+                `<div>
+                     Pematang Jaya
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_24d8a0c680846a17130c31125b532510 = L.marker(
+                [3.7833, 98.7167],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_0e3fabed42ffcbceaf593c9d106ef72a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_24d8a0c680846a17130c31125b532510.setIcon(icon_0e3fabed42ffcbceaf593c9d106ef72a);
+        
+    
+        var popup_9c4cd3aacbf06f7c295be0646c4399b1 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2e7b4d9d609ba4b4dcc49ba2be2cbb14 = $(`<div id="html_2e7b4d9d609ba4b4dcc49ba2be2cbb14" style="width: 100.0%; height: 100.0%;">Pematang Jaya - Sangat Tinggi (7)</div>`)[0];
+                popup_9c4cd3aacbf06f7c295be0646c4399b1.setContent(html_2e7b4d9d609ba4b4dcc49ba2be2cbb14);
+            
+        
+
+        marker_24d8a0c680846a17130c31125b532510.bindPopup(popup_9c4cd3aacbf06f7c295be0646c4399b1)
+        ;
+
+        
+    
+    
+            marker_24d8a0c680846a17130c31125b532510.bindTooltip(
+                `<div>
+                     Pematang Jaya
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_de20787d5ead9a0578f77f4259fa2dc6 = L.marker(
+                [3.7833, 98.7167],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_0d6792213ae94016f674a71582ea2521 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_de20787d5ead9a0578f77f4259fa2dc6.setIcon(icon_0d6792213ae94016f674a71582ea2521);
+        
+    
+        var popup_e575e9642879eff36ad78dfd2a58e715 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_f6fe21063a5116613a3d1fc98c53fcc1 = $(`<div id="html_f6fe21063a5116613a3d1fc98c53fcc1" style="width: 100.0%; height: 100.0%;">Pematang Jaya - Tinggi (21)</div>`)[0];
+                popup_e575e9642879eff36ad78dfd2a58e715.setContent(html_f6fe21063a5116613a3d1fc98c53fcc1);
+            
+        
+
+        marker_de20787d5ead9a0578f77f4259fa2dc6.bindPopup(popup_e575e9642879eff36ad78dfd2a58e715)
+        ;
+
+        
+    
+    
+            marker_de20787d5ead9a0578f77f4259fa2dc6.bindTooltip(
+                `<div>
+                     Pematang Jaya
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_e07172f1729619ea10a3371586d6e3f2 = L.marker(
+                [3.6667, 98.65],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_c932fcf31df2423d1aaeec4ced3a4dfe = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_e07172f1729619ea10a3371586d6e3f2.setIcon(icon_c932fcf31df2423d1aaeec4ced3a4dfe);
+        
+    
+        var popup_cc26dd3dd0156e2ddf062b0ececde7e3 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6857886465dcf9caf12326369eafe5df = $(`<div id="html_6857886465dcf9caf12326369eafe5df" style="width: 100.0%; height: 100.0%;">Sambirejo - Cukup (28)</div>`)[0];
+                popup_cc26dd3dd0156e2ddf062b0ececde7e3.setContent(html_6857886465dcf9caf12326369eafe5df);
+            
+        
+
+        marker_e07172f1729619ea10a3371586d6e3f2.bindPopup(popup_cc26dd3dd0156e2ddf062b0ececde7e3)
+        ;
+
+        
+    
+    
+            marker_e07172f1729619ea10a3371586d6e3f2.bindTooltip(
+                `<div>
+                     Sambirejo
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_209da402cc8c1b7ce073b98678718521 = L.marker(
+                [3.6667, 98.65],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_7553fcadf88d248318e67fbc79ae4ebf = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_209da402cc8c1b7ce073b98678718521.setIcon(icon_7553fcadf88d248318e67fbc79ae4ebf);
+        
+    
+        var popup_d6c880efacb0435a500c4c13f91d1a3b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_768f12a90acc514399867e953e5b6450 = $(`<div id="html_768f12a90acc514399867e953e5b6450" style="width: 100.0%; height: 100.0%;">Sambirejo - Sangat Tinggi (6)</div>`)[0];
+                popup_d6c880efacb0435a500c4c13f91d1a3b.setContent(html_768f12a90acc514399867e953e5b6450);
+            
+        
+
+        marker_209da402cc8c1b7ce073b98678718521.bindPopup(popup_d6c880efacb0435a500c4c13f91d1a3b)
+        ;
+
+        
+    
+    
+            marker_209da402cc8c1b7ce073b98678718521.bindTooltip(
+                `<div>
+                     Sambirejo
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ad5f1642554e829ffbc3a5d09dab46b8 = L.marker(
+                [3.6667, 98.65],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_5beb2fbf1851a95e085e82749328fdfe = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_ad5f1642554e829ffbc3a5d09dab46b8.setIcon(icon_5beb2fbf1851a95e085e82749328fdfe);
+        
+    
+        var popup_a8bb2a073f261623d0c399e3e6ad1ea9 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_8fd3a97abff44279f0a1d141e418bb91 = $(`<div id="html_8fd3a97abff44279f0a1d141e418bb91" style="width: 100.0%; height: 100.0%;">Sambirejo - Tinggi (16)</div>`)[0];
+                popup_a8bb2a073f261623d0c399e3e6ad1ea9.setContent(html_8fd3a97abff44279f0a1d141e418bb91);
+            
+        
+
+        marker_ad5f1642554e829ffbc3a5d09dab46b8.bindPopup(popup_a8bb2a073f261623d0c399e3e6ad1ea9)
+        ;
+
+        
+    
+    
+            marker_ad5f1642554e829ffbc3a5d09dab46b8.bindTooltip(
+                `<div>
+                     Sambirejo
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_5dbee520c2cb04d88f72891240b229ff = L.marker(
+                [3.95, 98.25],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_a61a8a2b4bad2363ad4b92d932793cde = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_5dbee520c2cb04d88f72891240b229ff.setIcon(icon_a61a8a2b4bad2363ad4b92d932793cde);
+        
+    
+        var popup_9ba03234f00640ac9a1ad01540d69834 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2087d49266dfc851f285ef056056fdf1 = $(`<div id="html_2087d49266dfc851f285ef056056fdf1" style="width: 100.0%; height: 100.0%;">Scanggang - Cukup (20)</div>`)[0];
+                popup_9ba03234f00640ac9a1ad01540d69834.setContent(html_2087d49266dfc851f285ef056056fdf1);
+            
+        
+
+        marker_5dbee520c2cb04d88f72891240b229ff.bindPopup(popup_9ba03234f00640ac9a1ad01540d69834)
+        ;
+
+        
+    
+    
+            marker_5dbee520c2cb04d88f72891240b229ff.bindTooltip(
+                `<div>
+                     Scanggang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_746eb0c347e837162add1d247e9af92d = L.marker(
+                [3.95, 98.25],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_2b0e2ae23e1997fd0398d57166199f61 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_746eb0c347e837162add1d247e9af92d.setIcon(icon_2b0e2ae23e1997fd0398d57166199f61);
+        
+    
+        var popup_a52c3128e45ec05058188fcffe90339a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b52ec3a4ecbde6f8dece3d3574b020eb = $(`<div id="html_b52ec3a4ecbde6f8dece3d3574b020eb" style="width: 100.0%; height: 100.0%;">Scanggang - Rendah (1)</div>`)[0];
+                popup_a52c3128e45ec05058188fcffe90339a.setContent(html_b52ec3a4ecbde6f8dece3d3574b020eb);
+            
+        
+
+        marker_746eb0c347e837162add1d247e9af92d.bindPopup(popup_a52c3128e45ec05058188fcffe90339a)
+        ;
+
+        
+    
+    
+            marker_746eb0c347e837162add1d247e9af92d.bindTooltip(
+                `<div>
+                     Scanggang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_0a225717adb3a015dd02878e258c2e83 = L.marker(
+                [3.95, 98.25],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_6604aa409f6f2c132503fb3fd2246d00 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_0a225717adb3a015dd02878e258c2e83.setIcon(icon_6604aa409f6f2c132503fb3fd2246d00);
+        
+    
+        var popup_ccaa6bacab5ba45b2235df067131654a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_87866204c06e5dd28ab497f49fd7194f = $(`<div id="html_87866204c06e5dd28ab497f49fd7194f" style="width: 100.0%; height: 100.0%;">Scanggang - Sangat Tinggi (3)</div>`)[0];
+                popup_ccaa6bacab5ba45b2235df067131654a.setContent(html_87866204c06e5dd28ab497f49fd7194f);
+            
+        
+
+        marker_0a225717adb3a015dd02878e258c2e83.bindPopup(popup_ccaa6bacab5ba45b2235df067131654a)
+        ;
+
+        
+    
+    
+            marker_0a225717adb3a015dd02878e258c2e83.bindTooltip(
+                `<div>
+                     Scanggang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_daf306641279c9a91666f31807f92112 = L.marker(
+                [3.95, 98.25],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_7a9ef6baae65d1e5985ef33ba540530c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_daf306641279c9a91666f31807f92112.setIcon(icon_7a9ef6baae65d1e5985ef33ba540530c);
+        
+    
+        var popup_f872c69b5ffe7e242015551b3b986869 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2cc6c9346ef68e287653eecd141f8e79 = $(`<div id="html_2cc6c9346ef68e287653eecd141f8e79" style="width: 100.0%; height: 100.0%;">Scanggang - Tinggi (26)</div>`)[0];
+                popup_f872c69b5ffe7e242015551b3b986869.setContent(html_2cc6c9346ef68e287653eecd141f8e79);
+            
+        
+
+        marker_daf306641279c9a91666f31807f92112.bindPopup(popup_f872c69b5ffe7e242015551b3b986869)
+        ;
+
+        
+    
+    
+            marker_daf306641279c9a91666f31807f92112.bindTooltip(
+                `<div>
+                     Scanggang
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_da563628fc61a25e0ccbf2b97df2224d = L.marker(
+                [3.6333, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_8223e5d19d28e4d666b81c0e65d139c9 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_da563628fc61a25e0ccbf2b97df2224d.setIcon(icon_8223e5d19d28e4d666b81c0e65d139c9);
+        
+    
+        var popup_4699760065eb4e72fca57d1547ec3a55 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a6c1ed711138edd66b4bd0398f9c4d0d = $(`<div id="html_a6c1ed711138edd66b4bd0398f9c4d0d" style="width: 100.0%; height: 100.0%;">Stabat - Cukup (23)</div>`)[0];
+                popup_4699760065eb4e72fca57d1547ec3a55.setContent(html_a6c1ed711138edd66b4bd0398f9c4d0d);
+            
+        
+
+        marker_da563628fc61a25e0ccbf2b97df2224d.bindPopup(popup_4699760065eb4e72fca57d1547ec3a55)
+        ;
+
+        
+    
+    
+            marker_da563628fc61a25e0ccbf2b97df2224d.bindTooltip(
+                `<div>
+                     Stabat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_f4c62e1be8b68fb9f6009439a4fb9162 = L.marker(
+                [3.6333, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_637409055bc7c7eec76313bd674dbb7b = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_f4c62e1be8b68fb9f6009439a4fb9162.setIcon(icon_637409055bc7c7eec76313bd674dbb7b);
+        
+    
+        var popup_260855fa36a5742a7ec17b96f738dca9 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a241172041c6c99b3b16a707b5ff6329 = $(`<div id="html_a241172041c6c99b3b16a707b5ff6329" style="width: 100.0%; height: 100.0%;">Stabat - Rendah (1)</div>`)[0];
+                popup_260855fa36a5742a7ec17b96f738dca9.setContent(html_a241172041c6c99b3b16a707b5ff6329);
+            
+        
+
+        marker_f4c62e1be8b68fb9f6009439a4fb9162.bindPopup(popup_260855fa36a5742a7ec17b96f738dca9)
+        ;
+
+        
+    
+    
+            marker_f4c62e1be8b68fb9f6009439a4fb9162.bindTooltip(
+                `<div>
+                     Stabat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_db8027f0e0bce1c3b4c1b982699e6c5e = L.marker(
+                [3.6333, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_b292cb208de69872f350f552dd8a2411 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_db8027f0e0bce1c3b4c1b982699e6c5e.setIcon(icon_b292cb208de69872f350f552dd8a2411);
+        
+    
+        var popup_2b5d62dc4c86f5219ee63503bf53d49f = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4346132d013ecfd57004b14d70e4b0bb = $(`<div id="html_4346132d013ecfd57004b14d70e4b0bb" style="width: 100.0%; height: 100.0%;">Stabat - Sangat Tinggi (6)</div>`)[0];
+                popup_2b5d62dc4c86f5219ee63503bf53d49f.setContent(html_4346132d013ecfd57004b14d70e4b0bb);
+            
+        
+
+        marker_db8027f0e0bce1c3b4c1b982699e6c5e.bindPopup(popup_2b5d62dc4c86f5219ee63503bf53d49f)
+        ;
+
+        
+    
+    
+            marker_db8027f0e0bce1c3b4c1b982699e6c5e.bindTooltip(
+                `<div>
+                     Stabat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_16295a0d02cf43b52339ff979779a725 = L.marker(
+                [3.6333, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_0d80c688c8294dee4f3f42ecbd0ba438 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_16295a0d02cf43b52339ff979779a725.setIcon(icon_0d80c688c8294dee4f3f42ecbd0ba438);
+        
+    
+        var popup_7233eed8bb2d731e3efc75b72c0127b5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6870ed2ec16924372fbcaa877b9f4a1c = $(`<div id="html_6870ed2ec16924372fbcaa877b9f4a1c" style="width: 100.0%; height: 100.0%;">Stabat - Tinggi (21)</div>`)[0];
+                popup_7233eed8bb2d731e3efc75b72c0127b5.setContent(html_6870ed2ec16924372fbcaa877b9f4a1c);
+            
+        
+
+        marker_16295a0d02cf43b52339ff979779a725.bindPopup(popup_7233eed8bb2d731e3efc75b72c0127b5)
+        ;
+
+        
+    
+    
+            marker_16295a0d02cf43b52339ff979779a725.bindTooltip(
+                `<div>
+                     Stabat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_3c0afb4f0a3cbd4f269bf79644950bff = L.marker(
+                [3.65, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_a94977b9b5ded550a9acb4c6e3625f36 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_3c0afb4f0a3cbd4f269bf79644950bff.setIcon(icon_a94977b9b5ded550a9acb4c6e3625f36);
+        
+    
+        var popup_16e9491e7fe7ce6614b6cdc1594d5741 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d54e756028d51edf088602891fa92e1d = $(`<div id="html_d54e756028d51edf088602891fa92e1d" style="width: 100.0%; height: 100.0%;">Stabat Lama - Cukup (23)</div>`)[0];
+                popup_16e9491e7fe7ce6614b6cdc1594d5741.setContent(html_d54e756028d51edf088602891fa92e1d);
+            
+        
+
+        marker_3c0afb4f0a3cbd4f269bf79644950bff.bindPopup(popup_16e9491e7fe7ce6614b6cdc1594d5741)
+        ;
+
+        
+    
+    
+            marker_3c0afb4f0a3cbd4f269bf79644950bff.bindTooltip(
+                `<div>
+                     Stabat Lama
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_67278683785512bd28e785e8919ea3b2 = L.marker(
+                [3.65, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_7eaa80c2d026ff6830682437a558dd5c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_67278683785512bd28e785e8919ea3b2.setIcon(icon_7eaa80c2d026ff6830682437a558dd5c);
+        
+    
+        var popup_f19d70aac0ad880521f78d32611ebb15 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9b41ce9a4511e8d72375f987008bf82c = $(`<div id="html_9b41ce9a4511e8d72375f987008bf82c" style="width: 100.0%; height: 100.0%;">Stabat Lama - Rendah (1)</div>`)[0];
+                popup_f19d70aac0ad880521f78d32611ebb15.setContent(html_9b41ce9a4511e8d72375f987008bf82c);
+            
+        
+
+        marker_67278683785512bd28e785e8919ea3b2.bindPopup(popup_f19d70aac0ad880521f78d32611ebb15)
+        ;
+
+        
+    
+    
+            marker_67278683785512bd28e785e8919ea3b2.bindTooltip(
+                `<div>
+                     Stabat Lama
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_3cfc088b5512a24351b7c26bfd6f660e = L.marker(
+                [3.65, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_fb3a59d50370d97b73041e0d0822aac0 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_3cfc088b5512a24351b7c26bfd6f660e.setIcon(icon_fb3a59d50370d97b73041e0d0822aac0);
+        
+    
+        var popup_6f5d1abc2dafadbb6e87206d4bb903a0 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_7285814db4f504490f51a6c4e24eeecf = $(`<div id="html_7285814db4f504490f51a6c4e24eeecf" style="width: 100.0%; height: 100.0%;">Stabat Lama - Sangat Tinggi (6)</div>`)[0];
+                popup_6f5d1abc2dafadbb6e87206d4bb903a0.setContent(html_7285814db4f504490f51a6c4e24eeecf);
+            
+        
+
+        marker_3cfc088b5512a24351b7c26bfd6f660e.bindPopup(popup_6f5d1abc2dafadbb6e87206d4bb903a0)
+        ;
+
+        
+    
+    
+            marker_3cfc088b5512a24351b7c26bfd6f660e.bindTooltip(
+                `<div>
+                     Stabat Lama
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_7ef89c73a43d35a0b4cc9c2494cd5eb2 = L.marker(
+                [3.65, 98.5],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_3815eeae146ff2d7360485007ae4195d = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_7ef89c73a43d35a0b4cc9c2494cd5eb2.setIcon(icon_3815eeae146ff2d7360485007ae4195d);
+        
+    
+        var popup_0697a8fa1eda1ee77b9cabde672fef41 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_5cd1844ed0e79a54ee1d3b3363d3417f = $(`<div id="html_5cd1844ed0e79a54ee1d3b3363d3417f" style="width: 100.0%; height: 100.0%;">Stabat Lama - Tinggi (19)</div>`)[0];
+                popup_0697a8fa1eda1ee77b9cabde672fef41.setContent(html_5cd1844ed0e79a54ee1d3b3363d3417f);
+            
+        
+
+        marker_7ef89c73a43d35a0b4cc9c2494cd5eb2.bindPopup(popup_0697a8fa1eda1ee77b9cabde672fef41)
+        ;
+
+        
+    
+    
+            marker_7ef89c73a43d35a0b4cc9c2494cd5eb2.bindTooltip(
+                `<div>
+                     Stabat Lama
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9d5c6cddf925e888e4642eb5bbfc3fbc = L.marker(
+                [3.7, 98.6167],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_5eda9d4e6e8b1f8bdb9450893a3bc555 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_9d5c6cddf925e888e4642eb5bbfc3fbc.setIcon(icon_5eda9d4e6e8b1f8bdb9450893a3bc555);
+        
+    
+        var popup_4af54bd0ea7d5aa37218a07c572098f7 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c8a1d263fd6d5dc03ccd71bd668c00d4 = $(`<div id="html_c8a1d263fd6d5dc03ccd71bd668c00d4" style="width: 100.0%; height: 100.0%;">Tanjung Langkat - Cukup (15)</div>`)[0];
+                popup_4af54bd0ea7d5aa37218a07c572098f7.setContent(html_c8a1d263fd6d5dc03ccd71bd668c00d4);
+            
+        
+
+        marker_9d5c6cddf925e888e4642eb5bbfc3fbc.bindPopup(popup_4af54bd0ea7d5aa37218a07c572098f7)
+        ;
+
+        
+    
+    
+            marker_9d5c6cddf925e888e4642eb5bbfc3fbc.bindTooltip(
+                `<div>
+                     Tanjung Langkat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_00226603a2cd84bd64e80477c52cf0e7 = L.marker(
+                [3.7, 98.6167],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_96f96b6a4ddfd074dc97784119088893 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_00226603a2cd84bd64e80477c52cf0e7.setIcon(icon_96f96b6a4ddfd074dc97784119088893);
+        
+    
+        var popup_b70fe0374b0f88062bd0c414ed73b83a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_7e40000290da7283e9353817d5b8bf22 = $(`<div id="html_7e40000290da7283e9353817d5b8bf22" style="width: 100.0%; height: 100.0%;">Tanjung Langkat - Rendah (1)</div>`)[0];
+                popup_b70fe0374b0f88062bd0c414ed73b83a.setContent(html_7e40000290da7283e9353817d5b8bf22);
+            
+        
+
+        marker_00226603a2cd84bd64e80477c52cf0e7.bindPopup(popup_b70fe0374b0f88062bd0c414ed73b83a)
+        ;
+
+        
+    
+    
+            marker_00226603a2cd84bd64e80477c52cf0e7.bindTooltip(
+                `<div>
+                     Tanjung Langkat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_c5afcead1cafde2bf619451d31aeaa1e = L.marker(
+                [3.7, 98.6167],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_205f0b0ff6217eb519589e1e14d129ec = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_c5afcead1cafde2bf619451d31aeaa1e.setIcon(icon_205f0b0ff6217eb519589e1e14d129ec);
+        
+    
+        var popup_21dbfac9d815a9d99d3ff06e1730a369 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e47404519919df6422c4b34809119ab4 = $(`<div id="html_e47404519919df6422c4b34809119ab4" style="width: 100.0%; height: 100.0%;">Tanjung Langkat - Sangat Tinggi (1)</div>`)[0];
+                popup_21dbfac9d815a9d99d3ff06e1730a369.setContent(html_e47404519919df6422c4b34809119ab4);
+            
+        
+
+        marker_c5afcead1cafde2bf619451d31aeaa1e.bindPopup(popup_21dbfac9d815a9d99d3ff06e1730a369)
+        ;
+
+        
+    
+    
+            marker_c5afcead1cafde2bf619451d31aeaa1e.bindTooltip(
+                `<div>
+                     Tanjung Langkat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_4bc42b389e4f0b8073c18623af05516d = L.marker(
+                [3.7, 98.6167],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_30c4cf77a554b690a43c00813e3e400f = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_4bc42b389e4f0b8073c18623af05516d.setIcon(icon_30c4cf77a554b690a43c00813e3e400f);
+        
+    
+        var popup_14c351bd0412dc11e007a1778e421cc2 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4674ca2754bc9ad930e628d3da61c725 = $(`<div id="html_4674ca2754bc9ad930e628d3da61c725" style="width: 100.0%; height: 100.0%;">Tanjung Langkat - Tinggi (33)</div>`)[0];
+                popup_14c351bd0412dc11e007a1778e421cc2.setContent(html_4674ca2754bc9ad930e628d3da61c725);
+            
+        
+
+        marker_4bc42b389e4f0b8073c18623af05516d.bindPopup(popup_14c351bd0412dc11e007a1778e421cc2)
+        ;
+
+        
+    
+    
+            marker_4bc42b389e4f0b8073c18623af05516d.bindTooltip(
+                `<div>
+                     Tanjung Langkat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_80e7747b839dee52687c67e66addd389 = L.marker(
+                [3.8, 98.6],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_c615427fa1c674c92f66b2c9fc5772f1 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_80e7747b839dee52687c67e66addd389.setIcon(icon_c615427fa1c674c92f66b2c9fc5772f1);
+        
+    
+        var popup_80b400a493c8a5aa75e53e6b8c20815a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_559b56500d67276d8f53818f6c9a7911 = $(`<div id="html_559b56500d67276d8f53818f6c9a7911" style="width: 100.0%; height: 100.0%;">Tanjung Slamat - Cukup (15)</div>`)[0];
+                popup_80b400a493c8a5aa75e53e6b8c20815a.setContent(html_559b56500d67276d8f53818f6c9a7911);
+            
+        
+
+        marker_80e7747b839dee52687c67e66addd389.bindPopup(popup_80b400a493c8a5aa75e53e6b8c20815a)
+        ;
+
+        
+    
+    
+            marker_80e7747b839dee52687c67e66addd389.bindTooltip(
+                `<div>
+                     Tanjung Slamat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_758efba0bb8d31778d773c4e17c41890 = L.marker(
+                [3.8, 98.6],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_712e5bc1e6c87b76208092db9609ee24 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_758efba0bb8d31778d773c4e17c41890.setIcon(icon_712e5bc1e6c87b76208092db9609ee24);
+        
+    
+        var popup_ad2f48a64cd44bd3ad2f06f894d99265 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a1bd5fecdb43a9713beb9aa8f871ef8e = $(`<div id="html_a1bd5fecdb43a9713beb9aa8f871ef8e" style="width: 100.0%; height: 100.0%;">Tanjung Slamat - Rendah (1)</div>`)[0];
+                popup_ad2f48a64cd44bd3ad2f06f894d99265.setContent(html_a1bd5fecdb43a9713beb9aa8f871ef8e);
+            
+        
+
+        marker_758efba0bb8d31778d773c4e17c41890.bindPopup(popup_ad2f48a64cd44bd3ad2f06f894d99265)
+        ;
+
+        
+    
+    
+            marker_758efba0bb8d31778d773c4e17c41890.bindTooltip(
+                `<div>
+                     Tanjung Slamat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_f7685fdb4601aed007a99a4a2e473e93 = L.marker(
+                [3.8, 98.6],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_779f7225f07946af6afbe59e0f39335c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_f7685fdb4601aed007a99a4a2e473e93.setIcon(icon_779f7225f07946af6afbe59e0f39335c);
+        
+    
+        var popup_21e50417951101f2cb5cf7c0c39e6f86 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a55665c8ff0fbd7e124c663cdd66e717 = $(`<div id="html_a55665c8ff0fbd7e124c663cdd66e717" style="width: 100.0%; height: 100.0%;">Tanjung Slamat - Sangat Tinggi (2)</div>`)[0];
+                popup_21e50417951101f2cb5cf7c0c39e6f86.setContent(html_a55665c8ff0fbd7e124c663cdd66e717);
+            
+        
+
+        marker_f7685fdb4601aed007a99a4a2e473e93.bindPopup(popup_21e50417951101f2cb5cf7c0c39e6f86)
+        ;
+
+        
+    
+    
+            marker_f7685fdb4601aed007a99a4a2e473e93.bindTooltip(
+                `<div>
+                     Tanjung Slamat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ee79f8cc7d88e51a70f101f1f41e393b = L.marker(
+                [3.8, 98.6],
+                {}
+            ).addTo(map_6f63a7ed542063ac807114395de3ce61);
+        
+    
+            var icon_ae75ef3cbca3e7d523bf1d6700f79897 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_ee79f8cc7d88e51a70f101f1f41e393b.setIcon(icon_ae75ef3cbca3e7d523bf1d6700f79897);
+        
+    
+        var popup_3d9c46fcb78a79dd29c0c4fcd623b2f6 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_0eb77531b9e8b9c1a883e99dca0237f1 = $(`<div id="html_0eb77531b9e8b9c1a883e99dca0237f1" style="width: 100.0%; height: 100.0%;">Tanjung Slamat - Tinggi (32)</div>`)[0];
+                popup_3d9c46fcb78a79dd29c0c4fcd623b2f6.setContent(html_0eb77531b9e8b9c1a883e99dca0237f1);
+            
+        
+
+        marker_ee79f8cc7d88e51a70f101f1f41e393b.bindPopup(popup_3d9c46fcb78a79dd29c0c4fcd623b2f6)
+        ;
+
+        
+    
+    
+            marker_ee79f8cc7d88e51a70f101f1f41e393b.bindTooltip(
+                `<div>
+                     Tanjung Slamat
+                 </div>`,
+                {"sticky": true}
+            );
+        
+</script>
+</html>
