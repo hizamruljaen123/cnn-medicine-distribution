@@ -1,274 +1,197 @@
-/* style.css */
-
-/* General Styles */
+/* CSS Kustom untuk Semua Elemen */
 body {
-    display: flex;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    background-color: #f4f7f9;
+    color: #333;
+    transition: background-color 0.3s ease; /* Transisi untuk perubahan latar belakang */
 }
 
-/* Sidebar styling */
-#sidebar {
-    min-width: 250px;
-    max-width: 250px;
-    min-height: 100vh;
-    background: #343a40;
-    color: #fff;
-    transition: all 0.3s;
-    position: fixed;
+body:hover {
+    background-color: #f0f0f0; /* Efek hover pada latar belakang */
 }
 
-#sidebar .sidebar-header {
-    padding: 20px;
-    background: #3b4046;
-    text-align: center;
+h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50;
+    transition: color 0.3s ease; /* Transisi untuk perubahan warna judul */
 }
 
-#sidebar .sidebar-header h3 {
-    margin: 0;
-    font-size: 1.5rem;
+h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
+    color: #1a2533; /* Efek hover pada judul */
 }
 
-#sidebar ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #47748b;
-}
-
-#sidebar ul li {
-    padding: 10px;
-    font-size: 1.1em;
-    display: block;
-}
-
-#sidebar ul li a {
-    color: #d1d1d1;
-    display: block;
+a {
+    color: #3498db;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: color 0.3s ease; /* Transisi untuk perubahan warna tautan */
 }
 
-#sidebar ul li a:hover {
-    background: #495057;
-    color: #fff;
-    padding-left: 25px;
+a:hover {
+    color: #2980b9;
+    text-decoration: underline;
 }
 
-#sidebar ul li.active > a, a[aria-expanded="true"] {
-    color: #fff;
-    background: #495057;
+/* CSS Kustom untuk Navbar */
+.navbar {
+    background-color: #34495e;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease; /* Transisi untuk perubahan latar belakang navbar */
 }
 
-#sidebar ul ul a {
-    font-size: 0.9em !important;
-    padding-left: 30px !important;
-    background: #6d7fcc;
+.navbar:hover {
+    background-color: #2c3e50; /* Efek hover pada navbar */
 }
 
-#sidebarCollapse {
-    display: none; /* Hide the toggle button */
+.navbar-brand, .navbar-nav .nav-link {
+    color: #ecf0f1;
+    transition: color 0.3s ease; /* Transisi untuk perubahan warna teks navbar */
 }
 
-/* Page Content */
-#content {
-    width: 100%;
-    padding: 20px;
-    margin-left: 250px;
-    transition: all 0.3s;
+.navbar-nav .nav-link:hover {
+    color: #bdc3c7;
 }
 
-@media (max-width: 768px) {
-    #sidebar {
-        margin-left: -250px;
-    }
-    #sidebar.active {
-        margin-left: 0;
-    }
-    #sidebarCollapse {
-        display: block;
-    }
-    #content {
-        margin-left: 0;
-    }
-    #content.active {
-        margin-left: 250px;
-    }
+/* CSS Kustom untuk Sidebar */
+#sidebar {
+    background-color: #34495e !important;
+    color: #ecf0f1;
+    padding-top: 20px;
+    transition: transform 0.3s ease; /* Transisi untuk pergeseran sidebar */
 }
 
-/* Animations */
-#sidebar ul li a {
-    position: relative;
-    overflow: hidden;
+#sidebar:hover {
+    transform: translateX(5px); /* Efek hover pada sidebar */
 }
 
-#sidebar ul li a::before {
-    content: '';
-    position: absolute;
-    width: 0%;
-    height: 100%;
-    background: #6d7fcc;
-    top: 0;
-    left: 0;
-    transition: all 0.4s;
-    z-index: -1;
+#sidebar .nav-link {
+    color: #ecf0f1;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transisi untuk perubahan warna latar belakang dan teks tautan sidebar */
 }
 
-#sidebar ul li a:hover::before {
-    width: 100%;
+#sidebar .nav-link.active, #sidebar .nav-link:hover {
+    background-color: #2c3e50;
+    color: #ffffff;
 }
 
-/* Animasi Fade-in Saat Tabel Muncul */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Styling Tabel */
-.table-responsive {
-    animation: fadeIn 0.8s ease-in-out;
-    overflow-x: auto;
-    padding: 10px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-    background: white;
-}
-
-thead {
-    background: linear-gradient(90deg, #007bff, #00c6ff);
-    color: white;
-    font-weight: bold;
-}
-
-thead th {
-    padding: 15px;
-    text-align: left;
-}
-
-tbody tr {
-    transition: background 0.3s ease, transform 0.2s ease-in-out;
-}
-
-tbody tr:hover {
-    background: #f0f8ff;
-    transform: scale(1.02);
-}
-
-td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Animasi Warna Hover pada Baris */
-@keyframes rowHighlight {
-    0% { background: #f8f9fa; }
-    50% { background: #d1ecf1; }
-    100% { background: #f8f9fa; }
-}
-
-tbody tr:nth-child(even) {
-    background: #f8f9fa;
-}
-
-tbody tr:hover {
-    animation: rowHighlight 0.6s ease-in-out;
-}
-
-/* Tombol Interaktif */
-.button {
-    display: inline-block;
-    padding: 8px 16px;
-    margin: 10px 0;
-    background: linear-gradient(45deg, #ff416c, #ff4b2b);
-    color: white;
-    border: none;
+/* CSS Kustom untuk Tabel */
+.table {
+    background-color: #ffffff;
     border-radius: 5px;
-    transition: 0.3s;
-    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease; /* Transisi untuk perubahan bayangan tabel */
 }
 
-.button:hover {
-    transform: scale(1.1);
-    background: linear-gradient(45deg, #ff4b2b, #ff416c);
+.table:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Efek hover pada tabel */
 }
 
-/* Responsif */
-@media screen and (max-width: 768px) {
-    table {
-        font-size: 14px;
-    }
-    thead th {
-        padding: 10px;
-    }
-    td {
-        padding: 8px;
-    }
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease; /* Transisi untuk perubahan warna latar belakang sel tabel */
 }
 
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 40px, 0);
-    }
-    to {
-        opacity: 1;
-        transform: none;
-    }
+.table tbody tr:nth-child(even):hover td {
+    background-color: #e0e0e0; /* Efek hover pada baris genap tabel */
 }
 
-/* Plotly Graphs */
-.plotly-graph-div {
-    margin-bottom: 30px;
-    animation: fadeIn 1s ease-in-out;
+.table thead th {
+    background-color: #3498db;
+    color: #ffffff;
 }
 
+/* CSS Kustom untuk Teks */
+.text-center {
+    text-align: center;
+    transition: transform 0.3s ease; /* Transisi untuk pergeseran teks tengah */
+}
+
+.text-center:hover {
+    transform: scale(1.05); /* Efek hover pada teks tengah */
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.text-muted {
+    color: #777;
+}
+
+/* CSS Kustom untuk Warna */
+.bg-primary {
+    background-color: #3498db;
+    color: #ffffff;
+    transition: background-color 0.3s ease; /* Transisi untuk perubahan latar belakang warna primer */
+}
+
+.bg-primary:hover {
+    background-color: #2980b9; /* Efek hover pada latar belakang warna primer */
+}
+
+.bg-secondary {
+    background-color: #ecf0f1;
+    color: #333;
+}
+
+.text-primary {
+    color: #3498db;
+}
+
+.text-success {
+    color: #27ae60;
+}
+
+.text-danger {
+    color: #e74c3c;
+}
+
+/* CSS Kustom untuk Gambar */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease; /* Transisi untuk perbesaran gambar */
+}
+
+.img-fluid:hover {
+    transform: scale(1.05); /* Efek hover pada gambar */
+}
+
+/* CSS Kustom untuk Tab */
+.nav-tabs .nav-link {
+    color: #3498db;
+    transition: color 0.3s ease; /* Transisi untuk perubahan warna tautan tab */
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #3498db #3498db #ddd;
+}
+
+.tab-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease; /* Transisi untuk perubahan opasitas konten tab */
+}
+
+.tab-content:hover {
+    opacity: 0.95; /* Efek hover pada konten tab */
+}
+
+/* Animasi Keyframes (Contoh) */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-/* Heading Styles */
-#content h1, #content h2 {
-    position: relative;
-    margin-bottom: 30px;
-    animation: slideInFromLeft 0.5s ease-out;
-}
-
-@keyframes slideInFromLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: #343a40;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #6d7fcc;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #495057;
+.tab-content {
+    animation: fadeIn 0.5s ease; /* Animasi fadeIn pada konten tab */
 }

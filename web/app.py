@@ -1,168 +1,197 @@
-from flask import Flask, render_template
-import pandas as pd
-import json
-import plotly.express as px
-import plotly.utils
-from sklearn.manifold import TSNE
-from geopy.geocoders import Nominatim
-import plotly.express as px
-
-import folium
+from flask import Flask, jsonify, render_template
 import pandas as pd
 import numpy as np
 import skfuzzy as fuzz
-import pickle
+import matplotlib.pyplot as plt
+import io
+import base64
 import os
+import json
+from sklearn.manifold import TSNE
+import plotly.express as px
+
+
 app = Flask(__name__)
 
-# Load the data
-file_path = 'data_fitri.xlsx'  # Update with your file path
-data = pd.read_excel(file_path)
-coordinates_file_path = 'coordinates.json'
-# Function to preprocess the data
-def preprocess_data():
-    features = data[['stok_awal', 'permintaan', 'pemakaian', 'sisa_stok']].values
-    return features
+# Load data dari Excel
+def load_data(file_path):
+    try:
+        df = pd.read_excel(file_path, sheet_name="Sheet1")
+        return df
+    except Exception as e:
+        print(f"Error loading Excel file: {e}")
+        return None
 
-# Fuzzy C-Means clustering function
-def fuzzy_cmeans_clustering(data, n_clusters=4):
-    data = data.T  # Transpose for clustering
-    cntr, u, _, _, _, _, _ = fuzz.cluster.cmeans(data, n_clusters, 2, error=0.005, maxiter=1000, init=None)
+# Fuzzy C-Means Clustering dengan semua fitur
+def fuzzy_c_means_clustering(df):
+    # Menggunakan semua kolom numerik yang relevan
+    features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+    data = df[features].values.T  # Data harus dalam bentuk transpose untuk FCM
+
+    n_clusters = 5  # 5 kategori kebutuhan
+
+    # Inisialisasi dan jalankan FCM
+    cntr, u, _, _, _, _, _ = fuzz.cluster.cmeans(
+        data, c=n_clusters, m=2, error=0.005, maxiter=1000, init=None
+    )
+    
+    # Tentukan cluster dengan keanggotaan tertinggi
     cluster_labels = np.argmax(u, axis=0)
-    return cluster_labels, cntr, u
+    df['cluster'] = cluster_labels
 
-# Save trained model
-def save_model(centers, membership_values, filename='fcm_model.pkl'):
-    with open(filename, 'wb') as f:
-        pickle.dump({'centers': centers, 'membership_values': membership_values}, f)
+    # Beri kategori berdasarkan cluster
+    kategori = ["Sangat Rendah", "Rendah", "Sedang", "Tinggi", "Sangat Tinggi"]
+    df['kategori'] = df['cluster'].apply(lambda x: kategori[x])
+    
+    return df, cntr
 
-# Load trained model
-def load_model(filename='fcm_model.pkl'):
-    with open(filename, 'rb') as f:
-        return pickle.load(f)
+# Hitung frekuensi kategori per wilayah dan tahun
+def count_frequencies(df):
+    frequency_table = df.groupby(['wilayah', 'tahun', 'kategori']).size().reset_index(name='frekuensi')
+    return frequency_table
 
-# Function to predict clusters for new data
-def predict_cluster(new_data, centers):
-    new_data = new_data.T
-    u, _, _, _, _, _ = fuzz.cluster.cmeans_predict(new_data, centers, 2, error=0.005, maxiter=1000)
-    return np.argmax(u, axis=0)
+# Plot hasil clustering
+def plot_fuzzy_cmeans(df, cntr):
+    plt.figure(figsize=(8, 6))
+    
+    # Scatter plot berdasarkan permintaan vs. persediaan (2D visualisasi sederhana)
+    plt.scatter(df['permintaan'], df['persediaan'], c=df['cluster'], cmap='viridis', marker='o', label='Data')
+    plt.scatter(cntr[:, 0], np.zeros_like(cntr[:, 0]), c='red', marker='x', s=100, label='Centroids')
+ # Menggunakan indeks sesuai fitur
+    
+    plt.xlabel('Permintaan')
+    plt.ylabel('Persediaan')
+    plt.title('Hasil Clustering Fuzzy C-Means')
+    plt.legend()
 
-def load_coordinates():
-    if os.path.exists(coordinates_file_path):
-        with open(coordinates_file_path, 'r') as f:
-            return json.load(f)
-    return {}
+    # Simpan gambar ke buffer
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()
+    
+    return plot_url
 
-# Function to save coordinates to JSON file
-def save_coordinates(coords):
-    with open(coordinates_file_path, 'w') as f:
-        json.dump(coords, f)
+def save_to_excel(df, file_name="hasil_fuzzy_cmeans.xlsx"):
+    try:
+        df.to_excel(file_name, index=False)
+        print(f"Hasil clustering disimpan dalam {file_name}")
+    except Exception as e:
+        print(f"Gagal menyimpan file: {e}")
+
+# Load hasil clustering dari Excel jika sudah ada
+def load_existing_clustering(file_name="hasil_fuzzy_cmeans.xlsx"):
+    if os.path.exists(file_name):
+        try:
+            df = pd.read_excel(file_name)
+            print("Menggunakan hasil clustering yang sudah ada.")
+            return df
+        except Exception as e:
+            print(f"Gagal membaca file: {e}")
+    return None
+# Fungsi untuk menghitung dan membuat plot frekuensi tingkat kebutuhan per tahun
+def plot_frequencies_per_year(df):
+    # Hitung jumlah status tingkat kebutuhan per tahun
+    frequency_table = df.groupby(['tahun', 'kategori']).size().reset_index(name='frekuensi')
+    
+    # Filter untuk tahun yang diinginkan (2021-2024)
+    tahun_filter = [2021, 2022, 2023, 2024]
+    frequency_table = frequency_table[frequency_table['tahun'].isin(tahun_filter)]
+
+    # Buat plot menggunakan Plotly
+    fig = px.bar(frequency_table, 
+                 x="tahun", 
+                 y="frekuensi", 
+                 color="kategori", 
+                 title="Frekuensi Tingkat Kebutuhan per Tahun",
+                 labels={"frekuensi": "Jumlah", "tahun": "Tahun", "kategori": "Kategori"},
+                 barmode="group")  # Menampilkan kategori dalam grup per tahun
+
+    return fig.to_json()  # Mengembalikan JSON untuk diproses di frontend
+
+def plot_tsne_clustering(df):
+    features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+    X = df[features].values
+    tsne = TSNE(n_components=2, random_state=42)
+    X_embedded = tsne.fit_transform(X)
+    
+    df_tsne = pd.DataFrame(X_embedded, columns=['tsne_1', 'tsne_2'])
+    df_tsne['cluster'] = df['cluster']
+
+    fig = px.scatter(df_tsne, x='tsne_1', y='tsne_2', color=df_tsne['cluster'].astype(str),
+                     title="Visualisasi Clustering dengan t-SNE", labels={'color': 'Cluster'})
+
+    return fig.to_json()  # Mengembalikan JSON yang bisa diproses di frontend
+
+def count_frequencies_per_year(df):
+    frequency_dict = {}
+    for _, row in df.iterrows():
+        wilayah = row['wilayah']
+        tahun = row['tahun']
+        kategori = row['kategori']
+        
+        if wilayah not in frequency_dict:
+            frequency_dict[wilayah] = {}
+        if tahun not in frequency_dict[wilayah]:
+            frequency_dict[wilayah][tahun] = {}
+        if kategori not in frequency_dict[wilayah][tahun]:
+            frequency_dict[wilayah][tahun][kategori] = 0
+        
+        frequency_dict[wilayah][tahun][kategori] += 1
+    
+    return frequency_dict
 
 @app.route('/')
-def home():
-    # Proses data seperti biasa
-    features = preprocess_data()
-    cluster_labels, centers, membership_values = fuzzy_cmeans_clustering(features)
-    save_model(centers, membership_values)
+def index():
+    file_path = "data_fitri.xlsx"  # Ganti dengan path file yang benar
+    result_file = "hasil_fuzzy_cmeans.xlsx"
     
-    categories = {0: "Rendah", 1: "Cukup", 2: "Tinggi", 3: "Sangat Tinggi"}
-    category_labels = [categories[label] for label in cluster_labels]
+    df_clustered = load_existing_clustering(result_file)
     
-    data['Tingkat_Kebutuhan'] = category_labels
+    if df_clustered is None:
+        df = load_data(file_path)
+        df_clustered, cntr = fuzzy_c_means_clustering(df)
+        save_to_excel(df_clustered, result_file)
     
-    # Menghitung frekuensi per wilayah
-    frequency_per_region = data.groupby(['wilayah', 'Tingkat_Kebutuhan']).size().reset_index(name='Frekuensi')
+    frequencies = count_frequencies(df_clustered)
+    plot_url = plot_fuzzy_cmeans(df_clustered, cntr) if 'cntr' in locals() else ""
+    plot_tsne_json = plot_tsne_clustering(df_clustered)  # JSON Plotly untuk frontend
+    plot_frequencies_json = plot_frequencies_per_year(df_clustered)  # JSON Plotly untuk grafik frekuensi
 
-    # Grafik bar untuk frekuensi per wilayah
-    fig_bar = px.bar(frequency_per_region, 
-                     x='wilayah', 
-                     y='Frekuensi', 
-                     color='Tingkat_Kebutuhan', 
-                     title='Frekuensi per Wilayah')
+    return render_template("index.html", 
+                           clusters=df_clustered.to_dict(orient='records'), 
+                           frequencies=frequencies.to_dict(orient='records'), 
+                           plot_url=plot_url,
+                           plot_tsne_json=plot_tsne_json,
+                           plot_frequencies_json=plot_frequencies_json)  # Kirim ke template
 
-    # Grafik scatter, misalnya untuk visualisasi data clustering
-    fig_scatter = px.scatter(data, 
-                             x='stok_awal', 
-                             y='permintaan', 
-                             color='Tingkat_Kebutuhan', 
-                             title='Scatter Plot of Stok Awal vs Permintaan')
 
-    # t-SNE untuk visualisasi dimensi tinggi (optional)
-    tsne = TSNE(n_components=2)
-    tsne_result = tsne.fit_transform(features)
-    fig_tsne = px.scatter(x=tsne_result[:, 0], 
-                          y=tsne_result[:, 1], 
-                          title='t-SNE Projection')
-
-    # Konversi grafik ke format JSON
-    bar_graphJSON = json.dumps(fig_bar, cls=plotly.utils.PlotlyJSONEncoder)
-    scatter_graphJSON = json.dumps(fig_scatter, cls=plotly.utils.PlotlyJSONEncoder)
-    tsne_graphJSON = json.dumps(fig_tsne, cls=plotly.utils.PlotlyJSONEncoder)
-
-    # Ambil koordinat wilayah
-    coordinates = load_coordinates()
-    geolocator = Nominatim(user_agent="geoapiExercises")
+@app.route('/api/coordinates', methods=['GET'])
+def get_coordinates():
+    file_path = "coordinates.json"
+    if not os.path.exists(file_path):
+        return jsonify({"error": "File coordinates.json tidak ditemukan!"}), 404
     
-    def get_coordinates(region):
-        if region in coordinates:
-            return pd.Series(coordinates[region])
-        try:
-            location = geolocator.geocode(region)
-            if location:
-                coords = [location.latitude, location.longitude]
-                coordinates[region] = coords
-                save_coordinates(coordinates)
-                return pd.Series(coords)
-            else:
-                return pd.Series([None, None])
-        except:
-            return pd.Series([None, None])
-
-    coords = frequency_per_region['wilayah'].apply(get_coordinates)
-    frequency_per_region[['Latitude', 'Longitude']] = coords
-
-    map_center = [frequency_per_region['Latitude'].mean(), frequency_per_region['Longitude'].mean()]
-    if np.isnan(map_center[0]) or np.isnan(map_center[1]):
-        map_center = [0, 0]
-
-    m = folium.Map(location=map_center, zoom_start=5)
-    markers = []
-
-    for _, row in frequency_per_region.iterrows():
-        if pd.notnull(row['Latitude']) and pd.notnull(row['Longitude']):
-            # Include frequency data for the marker popup
-            popup_content = f"{row['wilayah']} - {row['Tingkat_Kebutuhan']} ({row['Frekuensi']})"
-            markers.append({
-                'lat': row['Latitude'],
-                'lon': row['Longitude'],
-                'popup': popup_content,
-                'frequencies': row[['Tingkat_Kebutuhan', 'Frekuensi']].to_dict()  # Pass frequencies
-            })
-
-            folium.Marker(
-                location=[row['Latitude'], row['Longitude']],
-                popup=popup_content,
-                tooltip=row['wilayah'],
-                icon=folium.Icon(color="blue")
-            ).add_to(m)
-# Mengkonversi data frekuensi menjadi format JSON
-    frequency_json = frequency_per_region.groupby('wilayah').apply(
-        lambda x: x[['Tingkat_Kebutuhan', 'Frekuensi']].to_dict(orient='records')
-    ).to_json()
-
-    # Simpan peta sebagai HTML
-    map_path = "static/map.html"
-    m.save(map_path)
-
-    # Kembalikan grafik dalam format JSON ke template
-    return render_template('index.html', 
-                           bar_graphJSON=bar_graphJSON, 
-                           scatter_graphJSON=scatter_graphJSON, 
-                           tsne_graphJSON=tsne_graphJSON, 
-                           table_data=data.to_dict(orient='records'),
-                           map_path=map_path,
-                           frequency_json=frequency_json,
-                           markers=markers)  # Send markers with frequency data
+    try:
+        with open(file_path, "r") as file:
+            coordinates_data = json.load(file)
+        
+        # Menghitung jumlah frekuensi per kategori setiap wilayah per tahun
+        result_file = "hasil_fuzzy_cmeans.xlsx"
+        df_clustered = load_existing_clustering(result_file)
+        frequency_per_year = count_frequencies_per_year(df_clustered) if df_clustered is not None else {}
+        
+        # Gabungkan koordinat dengan data frekuensi
+        for wilayah, coords in coordinates_data.items():
+            if wilayah in frequency_per_year:
+                coordinates_data[wilayah] = {
+                    "coordinates": coords,
+                    "frequencies": frequency_per_year[wilayah]
+                }
+        
+        return jsonify(coordinates_data)
+    except Exception as e:
+        return jsonify({"error": f"Gagal membaca file: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

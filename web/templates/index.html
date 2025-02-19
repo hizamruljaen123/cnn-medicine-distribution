@@ -1,142 +1,238 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <title>Admin Dashboard</title>
-    </head>
-    <body>
-        <nav id="sidebar" class="bg-dark text-white p-3">
-            <h3>Admin Dashboard</h3>
-            <ul class="list-unstyled">
-                <li class="active"><a href="#" class="text-white">Dashboard</a></li>
-                <li><a href="#" class="text-white">Reports</a></li>
-                <li><a href="#" class="text-white">Analytics</a></li>
-                <li><a href="#" class="text-white">Export</a></li>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>Hasil Clustering Fuzzy C-Means</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Analisis Clustering</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Hasil Clustering <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Tentang</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Kontak</a>
+                </li>
             </ul>
-        </nav>
-        <div id="content" class="container-fluid mt-4">
-            <h1>Clustering Results</h1>
-            <div class="mt-5">
-                <h2>Frekuensi Kebutuhan Obat</h2>
-                <div id="frequency-bar-chart"></div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <h2>Scatter Plot Kebutuhan Obat</h2>
-                    <div id="scatter-plot"></div>
-                </div>
-                <div class="col-md-6">
-                    <h2>Visualisasi TSNE Kebutuhan Obat</h2>
-                    <div id="tsne-graph"></div>
-                </div>
-            </div>
-            <h3>Peta Distribusi Kebutuhan Obat</h3>
-            <iframe src="{{ map_path }}" width="100%" height="500px"></iframe>
-
-            <div class="mt-5">
-                <h2>Tabel Hasil Klasterisasi</h2>
-                <div class="table-responsive">
-                    <table class="table table-striped" id="clustering-result-table">
-                        <thead>
-                            <!-- Data header akan diisi oleh JavaScript -->
-                        </thead>
-                        <tbody>
-                            <!-- Data akan dimasukkan dengan JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
+    </nav>
 
-        <script>
-            // Data JSON untuk grafik dari backend
-            var bar_graphJSON = {{ bar_graphJSON|safe }};
-            Plotly.newPlot('frequency-bar-chart', bar_graphJSON.data, bar_graphJSON.layout);
-        
-            var scatter_graphJSON = {{ scatter_graphJSON|safe }};
-            Plotly.newPlot('scatter-plot', scatter_graphJSON.data, scatter_graphJSON.layout);
-        
-            var tsne_graphJSON = {{ tsne_graphJSON|safe }};
-            Plotly.newPlot('tsne-graph', tsne_graphJSON.data, tsne_graphJSON.layout);
-        
-            var tableData = {{ table_data | safe }};
-        
-            // Menampilkan tabel hasil klasterisasi
-            document.addEventListener("DOMContentLoaded", function() {
-                var table = document.getElementById("clustering-result-table");
-                var tableHead = table.querySelector("thead");  
-                var tableBody = table.querySelector("tbody");
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                Ringkasan <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Data Mentah
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Visualisasi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                Laporan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
-                // Menghindari duplikasi thead
-                if (tableHead && tableHead.getAttribute("data-initialized") !== "true") {
-                    tableHead.setAttribute("data-initialized", "true");
-                } else if (tableHead) {
-                    tableHead.remove(); 
-                }
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Hasil Clustering Fuzzy C-Means</h1>
+                </div>
 
-                // Mengosongkan tbody dan memasukkan data baru
-                tableBody.innerHTML = "";  
-        
-                tableData.forEach(function(row) {
-                    var tr = document.createElement("tr");
-                    ["id", "nama_obat", "satuan", "stok_awal", "penerimaan", "persediaan", "pemakaian", "sisa_stok", "permintaan", "wilayah", "tahun", "Tingkat_Kebutuhan"].forEach(function(col) {
-                        var td = document.createElement("td");
-                        td.textContent = row[col];
-                        tr.appendChild(td);
+                <div class="row">
+                    
+                    <div class="col-md-6">
+                        <div>
+                            <h3>Visualisasi Clustering dengan t-SNE</h3>
+                            <div id="tsne-plot"></div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-6">
+                        <div>
+                            <h3>Frekuensi Pertahun</h3>
+                            <div id="frequency-plot"></div>
+
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="col-lg-12">
+                        <br>
+                        <h3>Mapping Puskesmas</h3>
+                        <div id="map" style="height: 500px;"></div>
+                    </div>
+                </div>
+
+                <h2 class="mt-4">Frekuensi Kategori per Wilayah per Tahun</h2>
+
+                <ul class="nav nav-tabs" id="yearTabs" role="tablist">
+                    {% for year in frequencies | groupby('tahun') %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ year.grouper }}" data-toggle="tab" href="#year-{{ year.grouper }}" role="tab">
+                            {{ year.grouper }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="tab-content mt-3">
+                    {% for year, data in frequencies | groupby('tahun') %}
+                    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="year-{{ year }}" role="tabpanel">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Wilayah</th>
+                                    <th>Sangat Rendah</th>
+                                    <th>Rendah</th>
+                                    <th>Sedang</th>
+                                    <th>Tinggi</th>
+                                    <th>Sangat Tinggi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for wilayah, rows in data | groupby('wilayah') %}
+                                <tr>
+                                    <td>{{ wilayah }}</td>
+                                    <td>{{ rows | selectattr("kategori", "equalto", "Sangat Rendah") | list | length }}</td>
+                                    <td>{{ rows | selectattr("kategori", "equalto", "Rendah") | list | length }}</td>
+                                    <td>{{ rows | selectattr("kategori", "equalto", "Sedang") | list | length }}</td>
+                                    <td>{{ rows | selectattr("kategori", "equalto", "Tinggi") | list | length }}</td>
+                                    <td>{{ rows | selectattr("kategori", "equalto", "Sangat Tinggi") | list | length }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endfor %}
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var plotTsneData = {{ plot_tsne_json|safe }};
+        Plotly.newPlot('tsne-plot', plotTsneData);
+        var plotFrequenciesData = {{ plot_frequencies_json|safe }};
+        Plotly.newPlot('frequency-plot', plotFrequenciesData);
+
+        // Maps
+        function initMap() {
+    // Inisialisasi peta Leaflet
+    var map = L.map("map").setView([3.75, 98.5], 9); // Pusatkan di wilayah Sumatera Utara
+
+    // Tambahkan tile layer (peta dasar)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Ambil data dari API Flask dan tambahkan marker
+    fetch("/api/coordinates")
+        .then(response => response.json())
+        .then(data => {
+            Object.entries(data).forEach(([nama, info]) => {
+                let [lat, lon] = info.coordinates;
+                let frequencies = info.frequencies;
+
+                // Buat kontainer unik untuk setiap popup agar bisa menampung Plotly chart
+                let chartId = `chart-${nama.replace(/\s+/g, '-')}`; // ID unik berdasarkan nama wilayah
+                let popupContent = `
+                    <div style="width: 500px; max-height: 400px; overflow-y: auto;">
+                        <b>${nama}</b><br>Lat: ${lat}, Lon: ${lon}
+                        <div id="${chartId}" style="width: 100%; height: 300px;"></div>
+                `;
+
+                // Buat tabel frekuensi dalam popup
+                let tableContent = "<table border='1' style='width: 100%; text-align: center; font-size: 12px;'><tr><th>Tahun</th>";
+                let kategoriSet = new Set();
+
+                // Ambil semua kategori unik dari semua tahun
+                Object.values(frequencies).forEach(kategori => {
+                    Object.keys(kategori).forEach(k => kategoriSet.add(k));
+                });
+
+                let kategoriList = Array.from(kategoriSet);
+                kategoriList.forEach(k => {
+                    tableContent += `<th>${k}</th>`;
+                });
+                tableContent += "</tr>";
+
+                // Tambahkan data per tahun
+                Object.entries(frequencies).forEach(([tahun, kategori]) => {
+                    tableContent += `<tr><td>${tahun}</td>`;
+                    kategoriList.forEach(k => {
+                        tableContent += `<td>${kategori[k] || 0}</td>`; // Gunakan 0 jika tidak ada data
                     });
-                    tableBody.appendChild(tr);
+                    tableContent += "</tr>";
+                });
+
+                tableContent += "</table>";
+                popupContent += `<br>${tableContent}</div>`;
+
+                let marker = L.marker([lat, lon]).addTo(map);
+                marker.bindPopup(popupContent, { maxWidth: 500 }); // Atur ukuran popup
+
+                // Event listener untuk menggambar chart saat popup dibuka
+                marker.on("popupopen", () => {
+                    let years = Object.keys(frequencies);
+                    let traces = [];
+
+                    kategoriList.forEach(kategori => {
+                        let values = years.map(year => frequencies[year]?.[kategori] || 0);
+                        traces.push({
+                            x: years,
+                            y: values,
+                            name: kategori,
+                            type: "bar"
+                        });
+                    });
+
+                    let layout = {
+                        title: `Distribusi Frekuensi - ${nama}`,
+                        barmode: "stack",
+                        xaxis: { title: "Tahun" },
+                        yaxis: { title: "Frekuensi" }
+                    };
+
+                    Plotly.newPlot(chartId, traces, layout);
                 });
             });
+        })
+        .catch(error => console.error("Error fetching data:", error));
+}
 
-            // Mengambil data frekuensi dari backend
-            const frequencyData = JSON.parse('{{ frequency_json | tojson | safe }}');
 
-            // Fungsi untuk menampilkan data frekuensi ketika marker peta diklik
-            function showFrequency(region) {
-                const data = frequencyData[region];
-                if (data) {
-                    let html = `<h3>${region}</h3><ul>`;
-                    data.forEach(item => {
-                        html += `<li>${item.Tingkat_Kebutuhan}: ${item.Frekuensi}</li>`;
-                    });
-                    html += `</ul>`;
-                    document.getElementById('frequencyDetails').innerHTML = html;
-                } else {
-                    document.getElementById('frequencyDetails').innerHTML = `<p>Data tidak ditemukan untuk wilayah ${region}.</p>`;
-                }
-            }
 
-            // Membuat peta menggunakan Leaflet
-            var map = L.map('map-container').setView([0, 0], 5);
-
-            // Menambahkan tile layer dari OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // Menambahkan marker ke peta
-            var frequencyPerRegion = {{ frequency_json | safe }};
-            for (const region in frequencyPerRegion) {
-                const data = frequencyPerRegion[region];
-                if (data && data.length > 0) {
-                    const firstData = data[0]; // Ambil data pertama untuk latitude dan longitude
-                    if (firstData.Latitude && firstData.Longitude) {
-                        L.marker([firstData.Latitude, firstData.Longitude])
-                            .bindPopup(`<b>${region}</b><br>${data.map(item => `${item.Tingkat_Kebutuhan}: ${item.Frekuensi}`).join('<br>')}`)
-                            .addTo(map);
-                    }
-                }
-            }
-        </script>
-
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
-    </body>
+        initMap() 
+    </script>
+</body>
 </html>
