@@ -47,7 +47,13 @@ def fuzzy_c_means_clustering(df):
 
 # Hitung frekuensi kategori per wilayah dan tahun
 def count_frequencies(df):
+    # Simply count occurrences without any additional processing
     frequency_table = df.groupby(['wilayah', 'tahun', 'kategori']).size().reset_index(name='frekuensi')
+    
+    # Ensure we're actually counting properly
+    # Check if any preprocessing is affecting the count
+    print(f"Sample counts: {frequency_table['frekuensi'].value_counts()}")
+    
     return frequency_table
 
 # Plot hasil clustering
@@ -109,6 +115,7 @@ def plot_frequencies_per_year(df):
 
     return fig.to_json()  # Mengembalikan JSON untuk diproses di frontend
 
+
 def plot_tsne_clustering(df):
     features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
     X = df[features].values
@@ -118,10 +125,27 @@ def plot_tsne_clustering(df):
     df_tsne = pd.DataFrame(X_embedded, columns=['tsne_1', 'tsne_2'])
     df_tsne['cluster'] = df['cluster']
 
-    fig = px.scatter(df_tsne, x='tsne_1', y='tsne_2', color=df_tsne['cluster'].astype(str),
-                     title="Visualisasi Clustering dengan t-SNE", labels={'color': 'Cluster'})
+    # Menentukan label berdasarkan urutan cluster
+    cluster_labels = {
+        0: "Sangat Rendah",
+        1: "Rendah",
+        2: "Sedang",
+        3: "Tinggi",
+        4: "Sangat Tinggi"
+    }
+    
+    df_tsne['cluster_label'] = df_tsne['cluster'].map(cluster_labels)
 
-    return fig.to_json()  # Mengembalikan JSON yang bisa diproses di frontend
+    # Mengatur urutan kategori secara eksplisit
+    df_tsne['cluster_label'] = pd.Categorical(df_tsne['cluster_label'], 
+                                              categories=["Sangat Rendah", "Rendah", "Sedang", "Tinggi", "Sangat Tinggi"], 
+                                              ordered=True)
+
+    fig = px.scatter(df_tsne, x='tsne_1', y='tsne_2', color=df_tsne['cluster_label'],
+                     title="Visualisasi Clustering dengan t-SNE", labels={'color': 'Kategori Cluster'})
+
+    return fig.to_json()
+
 
 def count_frequencies_per_year(df):
     frequency_dict = {}

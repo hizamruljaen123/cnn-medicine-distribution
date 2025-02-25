@@ -195,3 +195,24 @@ a:hover {
 .tab-content {
     animation: fadeIn 0.5s ease; /* Animasi fadeIn pada konten tab */
 }
+
+.tab-link {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: lightgray;
+    border: none;
+    border-radius: 5px;
+  }
+  .tab-link.active {
+    background-color: darkgray;
+  }
+  .tab-content {
+    display: none;
+  }
+  .tab-content:not(.hidden) {
+    display: block;
+  }
+  .hidden {
+    display: none;
+  }

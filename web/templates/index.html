@@ -90,45 +90,8 @@
 
                 <h2 class="mt-4">Frekuensi Kategori per Wilayah per Tahun</h2>
 
-                <ul class="nav nav-tabs" id="yearTabs" role="tablist">
-                    {% for year in frequencies | groupby('tahun') %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ year.grouper }}" data-toggle="tab" href="#year-{{ year.grouper }}" role="tab">
-                            {{ year.grouper }}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-
-                <div class="tab-content mt-3">
-                    {% for year, data in frequencies | groupby('tahun') %}
-                    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="year-{{ year }}" role="tabpanel">
-                        <table class="table table-bordered">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Wilayah</th>
-                                    <th>Sangat Rendah</th>
-                                    <th>Rendah</th>
-                                    <th>Sedang</th>
-                                    <th>Tinggi</th>
-                                    <th>Sangat Tinggi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for wilayah, rows in data | groupby('wilayah') %}
-                                <tr>
-                                    <td>{{ wilayah }}</td>
-                                    <td>{{ rows | selectattr("kategori", "equalto", "Sangat Rendah") | list | length }}</td>
-                                    <td>{{ rows | selectattr("kategori", "equalto", "Rendah") | list | length }}</td>
-                                    <td>{{ rows | selectattr("kategori", "equalto", "Sedang") | list | length }}</td>
-                                    <td>{{ rows | selectattr("kategori", "equalto", "Tinggi") | list | length }}</td>
-                                    <td>{{ rows | selectattr("kategori", "equalto", "Sangat Tinggi") | list | length }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% endfor %}
+                <ul class="nav nav-tabs" id="tabNav"></ul>
+                <div class="tab-content mt-3" id="tabContent"></div>
                 </div>
             </main>
         </div>
@@ -167,7 +130,7 @@
                 let chartId = `chart-${nama.replace(/\s+/g, '-')}`; // ID unik berdasarkan nama wilayah
                 let popupContent = `
                     <div style="width: 500px; max-height: 400px; overflow-y: auto;">
-                        <b>${nama}</b><br>Lat: ${lat}, Lon: ${lon}
+                        <b>Puskesmas ${nama}</b><br>Lat: ${lat}, Lon: ${lon}
                         <div id="${chartId}" style="width: 100%; height: 300px;"></div>
                 `;
 
@@ -229,10 +192,93 @@
         })
         .catch(error => console.error("Error fetching data:", error));
 }
-
-
-
         initMap() 
+
+
+        function renderTabs(data) {
+  let tahunSet = new Set();
+  Object.values(data).forEach(lokasi => {
+    Object.keys(lokasi.frequencies).forEach(tahun => tahunSet.add(tahun));
+  });
+
+  let tahunArray = Array.from(tahunSet).sort();
+  let tabNav = document.getElementById("tabNav");
+  let tabContent = document.getElementById("tabContent");
+
+  tabNav.innerHTML = "";
+  tabContent.innerHTML = "";
+
+  let firstTab = true;
+
+  tahunArray.forEach((tahun) => {
+    let activeClass = firstTab ? "active" : "";
+    let activePane = firstTab ? "show active" : "";
+
+    // Tambahkan tab navigasi
+    tabNav.innerHTML += `
+      <li class="nav-item">
+    <a class="nav-link ${activeClass}" data-toggle="tab" href="#tab-${tahun}">
+        ${tahun}
+    </a>
+</li>
+
+    `;
+
+    // Inisialisasi konten tabel
+    let contentHtml = `
+      <div class="tab-pane fade ${activePane}" id="tab-${tahun}">
+        <h3 class="mt-3">Data Tahun ${tahun}</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Wilayah</th>
+                <th>Sangat Rendah</th>
+                <th>Rendah</th>
+                <th>Sedang</th>
+                <th>Tinggi</th>
+                <th>Sangat Tinggi</th>
+              </tr>
+            </thead>
+            <tbody>
+    `;
+
+    Object.entries(data).forEach(([lokasi, detail]) => {
+      if (detail.frequencies[tahun]) {
+        let rowData = {
+          "Sangat Rendah": detail.frequencies[tahun]["Sangat Rendah"] || 0,
+          "Rendah": detail.frequencies[tahun]["Rendah"] || 0,
+          "Sedang": detail.frequencies[tahun]["Sedang"] || 0,
+          "Tinggi": detail.frequencies[tahun]["Tinggi"] || 0,
+          "Sangat Tinggi": detail.frequencies[tahun]["Sangat Tinggi"] || 0,
+        };
+
+        contentHtml += `
+          <tr>
+            <td>${lokasi}</td>
+            <td>${rowData["Sangat Rendah"]}</td>
+            <td>${rowData["Rendah"]}</td>
+            <td>${rowData["Sedang"]}</td>
+            <td>${rowData["Tinggi"]}</td>
+            <td>${rowData["Sangat Tinggi"]}</td>
+          </tr>
+        `;
+      }
+    });
+
+    contentHtml += `</tbody></table></div></div>`;
+    tabContent.innerHTML += contentHtml;
+
+    firstTab = false;
+  });
+}
+
+// Contoh pemanggilan fungsi dengan data dari API
+fetch("/api/coordinates")
+  .then(response => response.json())
+  .then(data => renderTabs(data))
+  .catch(error => console.error("Error fetching data:", error));
+
     </script>
 </body>
 </html>
