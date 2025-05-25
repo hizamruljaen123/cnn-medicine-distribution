@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Simulasi Clustering Fuzzy C-Means</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(52, 73, 94, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fade out animation */
+        .fade-out {
+            opacity: 0;
+        }
+
+        /* Animation classes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .scale-102 {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="text-center">
+            <div class="loader mb-3"></div>
+            <h3 class="text-white mt-3">Loading...</h3>
+            <p class="text-white text-sm">Memuat data simulasi...</p>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                <a class="flex items-center space-x-2 text-xl font-bold" href="#">
+                    <i class="fas fa-chart-pie text-blue-300"></i>
+                    <span>Analisis Clustering</span>
+                </a>
+                <button class="md:hidden focus:outline-none" type="button" id="mobile-menu-button">
+                    <i class="fas fa-bars text-white text-xl"></i>
+                </button>
+                <div class="hidden md:flex space-x-6">
+                    <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium" href="/">
+                        <i class="fas fa-home mr-1"></i> Hasil Clustering
+                    </a>
+                    <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium border-b-2 border-blue-400" href="/simulasi">
+                        <i class="fas fa-flask mr-1"></i> Simulasi
+                    </a>
+                    <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium" href="#">
+                        <i class="fas fa-info-circle mr-1"></i> Tentang
+                    </a>
+                    <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium" href="#">
+                        <i class="fas fa-envelope mr-1"></i> Kontak
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu (Hidden by default) -->
+    <div class="md:hidden hidden bg-indigo-900 text-white" id="mobile-menu">
+        <div class="container mx-auto px-4 py-2">
+            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="/">
+                <i class="fas fa-home mr-1"></i> Hasil Clustering
+            </a>
+            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="/simulasi">
+                <i class="fas fa-flask mr-1"></i> Simulasi
+            </a>
+            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="#">
+                <i class="fas fa-info-circle mr-1"></i> Tentang
+            </a>
+            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="#">
+                <i class="fas fa-envelope mr-1"></i> Kontak
+            </a>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="flex flex-wrap">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="w-full md:w-1/5 lg:w-1/6 bg-gradient-to-b from-indigo-900 to-blue-800 text-white shadow-lg transform transition-all duration-300 ease-in-out">
+                <div class="p-4">
+                    <div class="flex items-center justify-center mb-6 border-b border-blue-700 pb-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-cogs text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h5 class="font-medium">Simulasi Panel</h5>
+                            <p class="text-xs text-blue-300">Konfigurasi & Hasil</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-2">
+                        <li class="group">
+                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#parameter-section">
+                                <i class="fas fa-sliders-h w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
+                                <span>Parameter Input</span>
+                            </a>
+                        </li>
+                        <li class="group">
+                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#data-preview-section">
+                                <i class="fas fa-table w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
+                                <span>Preview Data</span>
+                            </a>
+                        </li>
+                        <li class="group">
+                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#iteration-section">
+                                <i class="fas fa-sync-alt w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
+                                <span>Proses Iterasi</span>
+                            </a>
+                        </li>
+                        <li class="group">
+                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#result-section">
+                                <i class="fas fa-check-circle w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
+                                <span>Hasil Akhir</span>
+                            </a>
+                        </li>
+                        <li class="group">
+                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#visualization-section">
+                                <i class="fas fa-chart-area w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
+                                <span>Visualisasi</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="w-full md:w-4/5 lg:w-5/6 p-4 md:p-6">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6 transform transition-all duration-500 hover:shadow-xl">
+                    <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-flask text-blue-600 mr-2"></i>
+                            Simulasi Clustering Fuzzy C-Means
+                        </h1>
+                        <div class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full flex items-center">
+                            <i class="fas fa-cog fa-spin mr-1"></i>
+                            Mode Simulasi
+                        </div>
+                    </div>
+
+                    <!-- Parameter Input Section -->
+                    <section id="parameter-section" class="mb-8 animate-fadeIn">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shadow-md mr-3">
+                                <i class="fas fa-sliders-h text-white"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">Parameter Input</h2>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-4 py-3">
+                                <h3 class="text-white font-medium flex items-center">
+                                    <i class="fas fa-cogs mr-2"></i>
+                                    Konfigurasi Algoritma Fuzzy C-Means
+                                </h3>
+                            </div>
+                            <div class="p-5">
+                                <form method="POST" action="/simulasi" class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        <div class="space-y-2">
+                                            <label for="n_clusters" class="block text-sm font-medium text-gray-700 flex items-center">
+                                                <i class="fas fa-layer-group text-blue-500 mr-2"></i>
+                                                Jumlah Cluster (c)
+                                            </label>
+                                            <div class="relative">
+                                                <input type="number" 
+                                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300" 
+                                                    id="n_clusters" 
+                                                    name="n_clusters" 
+                                                    value="{{ parameters.n_clusters|default(5) }}" 
+                                                    min="2" 
+                                                    max="10">
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <span class="text-gray-400">#</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-500">Jumlah cluster yang akan dibentuk (2-10)</p>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label for="m" class="block text-sm font-medium text-gray-700 flex items-center">
+                                                <i class="fas fa-wave-square text-indigo-500 mr-2"></i>
+                                                Fuzziness Parameter (m)
+                                            </label>
+                                            <div class="relative">
+                                                <input type="number" 
+                                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-300" 
+                                                    id="m" 
+                                                    name="m" 
+                                                    value="{{ parameters.m|default(2) }}" 
+                                                    min="1.1" 
+                                                    max="5" 
+                                                    step="0.1">
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <span class="text-gray-400">m</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-500">Parameter fuzziness (biasanya 2)</p>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label for="error" class="block text-sm font-medium text-gray-700 flex items-center">
+                                                <i class="fas fa-bullseye text-purple-500 mr-2"></i>
+                                                Error Threshold
+                                            </label>
+                                            <div class="relative">
+                                                <input type="number" 
+                                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-300" 
+                                                    id="error" 
+                                                    name="error" 
+                                                    value="{{ parameters.error|default(0.005) }}" 
+                                                    min="0.0001" 
+                                                    max="0.1" 
+                                                    step="0.0001">
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <span class="text-gray-400">ε</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-500">Threshold untuk konvergensi</p>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label for="maxiter" class="block text-sm font-medium text-gray-700 flex items-center">
+                                                <i class="fas fa-redo-alt text-pink-500 mr-2"></i>
+                                                Max Iterasi
+                                            </label>
+                                            <div class="relative">
+                                                <input type="number" 
+                                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-300" 
+                                                    id="maxiter" 
+                                                    name="maxiter" 
+                                                    value="{{ parameters.maxiter|default(100) }}" 
+                                                    min="10" 
+                                                    max="1000">
+                                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                    <span class="text-gray-400">max</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-500">Jumlah maksimum iterasi</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-center mt-6">
+                                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center">
+                                            <i class="fas fa-play mr-2"></i>
+                                            Mulai Simulasi
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                {% if data_preview %}
+                    <!-- Data Preview Section -->
+                    <section id="data-preview-section" class="mb-8 animate-fadeIn">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center shadow-md mr-3">
+                                <i class="fas fa-table text-white"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">Preview Data</h2>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            <div class="bg-gradient-to-r from-green-600 to-teal-600 px-4 py-3">
+                                <h3 class="text-white font-medium flex items-center">
+                                    <i class="fas fa-database mr-2"></i>
+                                    Data Sampel
+                                </h3>
+                            </div>
+                            <div class="p-5 overflow-x-auto">
+                                <div class="rounded-lg shadow-sm">
+                                    {{ data_preview|safe }}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Iteration Process Section -->
+                    <section id="iteration-section" class="mb-8 animate-fadeIn">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center shadow-md mr-3">
+                                <i class="fas fa-sync-alt text-white"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">Proses Iterasi</h2>
+                        </div>
+                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3">
+                                <h3 class="text-white font-medium flex items-center">
+                                    <i class="fas fa-code-branch mr-2"></i>
+                                    Tahapan Iterasi Algoritma
+                                </h3>
+                            </div>
+                            <div class="p-5">
+                                <div id="iteration-tabs-container" class="iteration-tabs">
+                                    <!-- Tabs will be generated by JavaScript -->
+                                </div>
+                                <div id="iteration-content-container" class="mt-4">
+                                    <!-- Content will be generated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Final Results Section -->
+                    <section id="result-section" class="mb-8 animate-fadeIn">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center shadow-md mr-3">
+                                <i class="fas fa-check-circle text-white"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">Hasil Akhir</h2>
+                        </div>
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3">
+                                <h3 class="text-white font-medium flex items-center">
+                                    <i class="fas fa-clipboard-check mr-2"></i>
+                                    Tabel Hasil Clustering
+                                </h3>
+                            </div>
+                            <div class="p-5 overflow-x-auto">
+                                <!-- Year Tabs -->
+                                <div class="flex flex-wrap border-b border-gray-200 mb-4">
+                                    <div class="mr-2">
+                                        <button class="inline-block px-4 py-2 font-medium border-b-2 border-purple-500 text-purple-600 transition-colors duration-300 year-tab-link" 
+                                               data-year="2021">
+                                            <i class="fas fa-calendar-alt mr-1"></i> 2021
+                                        </button>
+                                    </div>
+                                    <div class="mr-2">
+                                        <button class="inline-block px-4 py-2 font-medium text-gray-600 hover:text-purple-600 transition-colors duration-300 year-tab-link" 
+                                               data-year="2022">
+                                            <i class="fas fa-calendar-alt mr-1"></i> 2022
+                                        </button>
+                                    </div>
+                                    <div class="mr-2">
+                                        <button class="inline-block px-4 py-2 font-medium text-gray-600 hover:text-purple-600 transition-colors duration-300 year-tab-link" 
+                                               data-year="2023">
+                                            <i class="fas fa-calendar-alt mr-1"></i> 2023
+                                        </button>
+                                    </div>
+                                    <div class="mr-2">
+                                        <button class="inline-block px-4 py-2 font-medium text-gray-600 hover:text-purple-600 transition-colors duration-300 year-tab-link" 
+                                               data-year="2024">
+                                            <i class="fas fa-calendar-alt mr-1"></i> 2024
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Year Content -->
+                                <div class="year-tab-contents">
+                                    {% for year in [2021, 2022, 2023, 2024] %}
+                                    <div id="year-{{ year }}" class="year-tab-content {% if year == 2021 %}block{% else %}hidden{% endif %} animate-fadeIn" style="max-height: 700px; overflow-y: auto;">
+                                        <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
+                                            <thead class="bg-gradient-to-r from-purple-600 to-pink-700 text-white">
+                                                <tr>
+                                                    <th class="py-3 px-4 text-left">Wilayah</th>
+                                                    <th class="py-3 px-4 text-left">Obat</th>
+                                                    <th class="py-3 px-4 text-center">Stok Awal</th>
+                                                    <th class="py-3 px-4 text-center">Penerimaan</th>
+                                                    <th class="py-3 px-4 text-center">Persediaan</th>
+                                                    <th class="py-3 px-4 text-center">Pemakaian</th>
+                                                    <th class="py-3 px-4 text-center">Sisa Stok</th>
+                                                    <th class="py-3 px-4 text-center">Permintaan</th>
+                                                    <th class="py-3 px-4 text-center">Cluster</th>
+                                                    <th class="py-3 px-4 text-center">Kategori</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for cluster in clusters %}
+                                                    {% if cluster.tahun == year %}
+                                                    <tr class="{% if loop.index % 2 == 0 %}bg-white hover:bg-gray-50{% else %}bg-gray-50 hover:bg-gray-100{% endif %} transition-colors duration-200">
+                                                        <td class="py-3 px-4 border-b border-gray-200 font-medium">{{ cluster.wilayah }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200">{{ cluster.obat }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.stok_awal }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.penerimaan }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.persediaan }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.pemakaian }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.sisa_stok }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.permintaan }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">
+                                                            <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                                                                {% if cluster.cluster == 0 %}bg-blue-100 text-blue-800
+                                                                {% elif cluster.cluster == 1 %}bg-green-100 text-green-800
+                                                                {% elif cluster.cluster == 2 %}bg-yellow-100 text-yellow-800
+                                                                {% elif cluster.cluster == 3 %}bg-red-100 text-red-800
+                                                                {% else %}bg-purple-100 text-purple-800{% endif %}">
+                                                                {{ cluster.cluster }}
+                                                            </span>
+                                                        </td>
+                                                        <td class="py-3 px-4 border-b border-gray-200 text-center">
+                                                            <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                                                                {% if cluster.kategori == 'Sangat Rendah' %}bg-blue-100 text-blue-800
+                                                                {% elif cluster.kategori == 'Rendah' %}bg-green-100 text-green-800
+                                                                {% elif cluster.kategori == 'Sedang' %}bg-yellow-100 text-yellow-800
+                                                                {% elif cluster.kategori == 'Tinggi' %}bg-red-100 text-red-800
+                                                                {% else %}bg-purple-100 text-purple-800{% endif %}">
+                                                                {{ cluster.kategori }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Visualization Section -->
+                    <section id="visualization-section" class="mb-8 animate-fadeIn">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 rounded-full bg-pink-600 flex items-center justify-center shadow-md mr-3">
+                                <i class="fas fa-chart-area text-white"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800">Visualisasi Hasil</h2>
+                        </div>
+                        <div class="bg-gradient-to-r from-pink-50 to-red-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                            <div class="bg-gradient-to-r from-pink-600 to-red-600 px-4 py-3">
+                                <h3 class="text-white font-medium flex items-center">
+                                    <i class="fas fa-project-diagram mr-2"></i>
+                                    Visualisasi t-SNE
+                                </h3>
+                            </div>
+                            <div class="p-5">
+                                <div id="final-tsne-plot" class="w-full h-96 rounded-lg"></div>
+                            </div>
+                        </div>
+                    </section>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Loading Screen
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading time (you can remove this setTimeout in production)
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.classList.add('fade-out');
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1500); // Adjust time as needed
+
+            // Year Tab Switching Functionality
+            document.querySelectorAll('.year-tab-link').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.year-tab-link').forEach(t => {
+                        t.classList.remove('border-b-2', 'border-purple-500', 'text-purple-600');
+                        t.classList.add('text-gray-600', 'hover:text-purple-600');
+                    });
+
+                    // Add active class to clicked tab
+                    this.classList.add('border-b-2', 'border-purple-500', 'text-purple-600');
+                    this.classList.remove('text-gray-600', 'hover:text-purple-600');
+
+                    // Hide all tab content
+                    document.querySelectorAll('.year-tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                        content.classList.remove('block');
+                    });
+
+                    // Show the selected tab content
+                    const year = this.getAttribute('data-year');
+                    const tabContent = document.getElementById(`year-${year}`);
+                    tabContent.classList.remove('hidden');
+                    tabContent.classList.add('block', 'animate-fadeIn');
+                });
+            });
+        });
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Sidebar Hover Effect
+        const sidebar = document.getElementById('sidebar');
+        sidebar.addEventListener('mouseenter', function() {
+            this.classList.add('shadow-2xl');
+            this.classList.add('scale-102');
+        });
+        sidebar.addEventListener('mouseleave', function() {
+            this.classList.remove('shadow-2xl');
+            this.classList.remove('scale-102');
+        });
+    </script>
+
+    {% if iteration_plots %}
+    <script>
+        // Generate tabs and content for iterations
+        document.addEventListener('DOMContentLoaded', function() {
+            const iterations = {{ iterations|tojson }};
+            const iterationPlots = {{ iteration_plots|tojson }};
+
+            // Generate tabs
+            let tabsHtml = '<div class="flex flex-wrap border-b border-gray-200 mb-4">';
+            for (let i = 0; i < iterations.length; i++) {
+                const isActive = i === 0 ? 'border-b-2 border-indigo-500 text-indigo-600' : 'text-gray-600 hover:text-indigo-600';
+                const iteration = iterations[i].iteration;
+                tabsHtml += `
+                    <div class="mr-2">
+                        <button class="inline-block px-4 py-2 font-medium ${isActive} transition-colors duration-300 tab-link" 
+                               data-tab="content-${i}">
+                            <i class="fas fa-code-branch mr-1"></i> Iterasi ${iteration}
+                        </button>
+                    </div>
+                `;
+            }
+            tabsHtml += '</div>';
+            document.getElementById('iteration-tabs-container').innerHTML = tabsHtml;
+
+            // Generate content
+            let contentHtml = '<div class="tab-contents">';
+            for (let i = 0; i < iterations.length; i++) {
+                const displayStyle = i === 0 ? 'block' : 'hidden';
+                const iteration = iterations[i];
+                contentHtml += `
+                    <div id="content-${i}" class="tab-content ${displayStyle} animate-fadeIn">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg shadow-md p-4">
+                                <h4 class="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-project-diagram text-indigo-500 mr-2"></i>
+                                    Visualisasi Clustering
+                                </h4>
+                                <div id="iteration-plot-${i}" class="w-full h-64 md:h-80"></div>
+                            </div>
+                            <div class="bg-white rounded-lg shadow-md p-4">
+                                <h4 class="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-chart-line text-purple-500 mr-2"></i>
+                                    Metrik Iterasi
+                                </h4>
+                                <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                                    <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                                        <tr>
+                                            <th class="py-3 px-4 text-left">Metrik</th>
+                                            <th class="py-3 px-4 text-right">Nilai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200">
+                                            <td class="py-3 px-4 font-medium flex items-center">
+                                                <i class="fas fa-hashtag text-indigo-400 mr-2"></i>
+                                                Iterasi
+                                            </td>
+                                            <td class="py-3 px-4 text-right font-mono">${iteration.iteration}</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200">
+                                            <td class="py-3 px-4 font-medium flex items-center">
+                                                <i class="fas fa-bullseye text-purple-400 mr-2"></i>
+                                                Fungsi Objektif
+                                            </td>
+                                            <td class="py-3 px-4 text-right font-mono">${iteration.objective_function.toFixed(6)}</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200">
+                                            <td class="py-3 px-4 font-medium flex items-center">
+                                                <i class="fas fa-percentage text-blue-400 mr-2"></i>
+                                                Koefisien Partisi
+                                            </td>
+                                            <td class="py-3 px-4 text-right font-mono">${iteration.partition_coefficient.toFixed(6)}</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                            <td class="py-3 px-4 font-medium flex items-center">
+                                                <i class="fas fa-exclamation-triangle text-yellow-400 mr-2"></i>
+                                                Error
+                                            </td>
+                                            <td class="py-3 px-4 text-right font-mono">${iteration.error.toFixed(6)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            contentHtml += '</div>';
+            document.getElementById('iteration-content-container').innerHTML = contentHtml;
+
+            // Add tab switching functionality
+            document.querySelectorAll('.tab-link').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-link').forEach(t => {
+                        t.classList.remove('border-b-2', 'border-indigo-500', 'text-indigo-600');
+                        t.classList.add('text-gray-600', 'hover:text-indigo-600');
+                    });
+
+                    // Add active class to clicked tab
+                    this.classList.add('border-b-2', 'border-indigo-500', 'text-indigo-600');
+                    this.classList.remove('text-gray-600', 'hover:text-indigo-600');
+
+                    // Hide all tab content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                        content.classList.remove('block');
+                    });
+
+                    // Show the selected tab content
+                    const tabId = this.getAttribute('data-tab');
+                    const tabContent = document.getElementById(tabId);
+                    tabContent.classList.remove('hidden');
+                    tabContent.classList.add('block', 'animate-fadeIn');
+                });
+            });
+
+            // Apply custom styling to plots
+            const plotLayout = {
+                font: {
+                    family: 'Poppins, sans-serif'
+                },
+                margin: {
+                    l: 50,
+                    r: 30,
+                    t: 30,
+                    b: 50
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                autosize: true
+            };
+
+            // Create plots with animation
+            for (let i = 0; i < iterationPlots.length; i++) {
+                const plotData = JSON.parse(iterationPlots[i]);
+
+                // Merge custom layout with existing layout
+                plotData.layout = {...plotData.layout, ...plotLayout};
+
+                Plotly.newPlot(`iteration-plot-${i}`, plotData).then(function() {
+                    // Add animation when plot is ready
+                    document.getElementById(`iteration-plot-${i}`).classList.add('animate-fadeIn');
+                });
+            }
+
+            // Create final t-SNE plot
+            const finalTsnePlot = {{ final_tsne_json|safe }};
+
+            // Merge custom layout with existing layout
+            finalTsnePlot.layout = {...finalTsnePlot.layout, ...plotLayout};
+
+            Plotly.newPlot('final-tsne-plot', finalTsnePlot).then(function() {
+                // Add animation when plot is ready
+                document.getElementById('final-tsne-plot').classList.add('animate-fadeIn');
+            });
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
