@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
+from flask_session import Session
 import pandas as pd
 import numpy as np
 import skfuzzy as fuzz
@@ -7,12 +8,18 @@ import io
 import base64
 import os
 import json
-from sklearn.manifold import TSNE
 import plotly.express as px
 import plotly.graph_objects as go
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.manifold import TSNE
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'supersecretkey'
+app.config['SESSION_TYPE'] = 'filesystem'  # Simpan session di server
+app.config['SESSION_PERMANENT'] = False
+
+Session(app)
 
 # Load data dari Excel
 def load_data(file_path):
@@ -80,8 +87,9 @@ def plot_fuzzy_cmeans(df, cntr):
 
 def save_to_excel(df, file_name="hasil_fuzzy_cmeans.xlsx"):
     try:
+        # Simpan langsung di direktori saat ini (web/)
         df.to_excel(file_name, index=False)
-        print(f"Hasil clustering disimpan dalam {file_name}")
+        print(f"Hasil clustering disimpan dalam {os.path.abspath(file_name)}")
     except Exception as e:
         print(f"Gagal menyimpan file: {e}")
 
@@ -116,41 +124,44 @@ def plot_frequencies_per_year(df):
     return fig.to_json()  # Mengembalikan JSON untuk diproses di frontend
 
 
-def plot_tsne_clustering(df):
+
+
+
+def prepare_tsne_data_for_echarts(df):
     features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
-    X = df[features].values
-    n_samples = X.shape[0]
-    # t-SNE butuh n_samples > perplexity, default perplexity=30
-    if n_samples < 3:
-        # Tidak cukup data untuk t-SNE
-        return '{}'
-    perplexity = min(30, n_samples - 1)
-    try:
-        tsne = TSNE(n_components=2, random_state=42, perplexity=perplexity)
-        X_embedded = tsne.fit_transform(X)
-    except Exception as e:
-        # Jika error, tampilkan pesan kosong
-        return '{}'
+    data = df[features].values
 
-    df_tsne = pd.DataFrame(X_embedded, columns=['tsne_1', 'tsne_2'])
-    df_tsne['cluster'] = df['cluster']
+    tsne = TSNE(n_components=2, perplexity=5, random_state=42, n_iter=300)
+    tsne_results = tsne.fit_transform(data)
 
-    cluster_labels = {
-        0: "Sangat Rendah",
-        1: "Rendah",
-        2: "Sedang",
-        3: "Tinggi",
-        4: "Sangat Tinggi"
+    df['tsne_x'] = tsne_results[:, 0]
+    df['tsne_y'] = tsne_results[:, 1]
+
+    # Siapkan data untuk ECharts
+    echarts_data = {
+        'categories': df['kategori'].unique().tolist(),
+        'series': []
     }
-    df_tsne['cluster_label'] = df_tsne['cluster'].map(cluster_labels)
-    categories = sorted(df_tsne['cluster_label'].unique())
-    df_tsne['cluster_label'] = pd.Categorical(df_tsne['cluster_label'], 
-                                              categories=categories, 
-                                              ordered=True)
-    fig = px.scatter(df_tsne, x='tsne_1', y='tsne_2', color=df_tsne['cluster_label'],
-                     title="Visualisasi Clustering dengan t-SNE", labels={'color': 'Kategori Cluster'})
-    return fig.to_json()
 
+    for category in echarts_data['categories']:
+        category_df = df[df['kategori'] == category]
+        series_data = []
+        for _, row in category_df.iterrows():
+            series_data.append({
+                'value': [row['tsne_x'], row['tsne_y']],
+                'name': f"{row['wilayah']} ({row['tahun']})"
+            })
+        
+        echarts_data['series'].append({
+            'name': category,
+            'type': 'scatter',
+            'data': series_data,
+            'emphasis': {
+                'focus': 'series'
+            }
+        })
+
+    return echarts_data  # Return dict, not JSON string
 
 def count_frequencies_per_year(df):
     frequency_dict = {}
@@ -184,14 +195,12 @@ def index():
 
     frequencies = count_frequencies(df_clustered)
     plot_url = plot_fuzzy_cmeans(df_clustered, cntr) if 'cntr' in locals() else ""
-    plot_tsne_json = plot_tsne_clustering(df_clustered)  # JSON Plotly untuk frontend
     plot_frequencies_json = plot_frequencies_per_year(df_clustered)  # JSON Plotly untuk grafik frekuensi
 
     return render_template("index.html", 
                            clusters=df_clustered.to_dict(orient='records'), 
                            frequencies=frequencies.to_dict(orient='records'), 
                            plot_url=plot_url,
-                           plot_tsne_json=plot_tsne_json,
                            plot_frequencies_json=plot_frequencies_json)  # Kirim ke template
 
 
@@ -299,173 +308,110 @@ def fuzzy_c_means_clustering_with_iterations(df, n_clusters=5, m=2, error=0.005,
 
     return df_result, cntr, iterations
 
-# Plot hasil clustering untuk setiap iterasi
-def plot_iteration_results(df, iterations, iteration_idx):
-    iteration = iterations[iteration_idx]
-    centers = iteration['centers']
-    membership = iteration['membership']
 
-    # Tentukan cluster untuk visualisasi
-    cluster_labels = np.argmax(membership, axis=0)
-    df_iter = df.copy()
-    df_iter['cluster'] = cluster_labels
-    kategori = ["Sangat Rendah", "Rendah", "Sedang", "Tinggi", "Sangat Tinggi"]
-    df_iter['kategori'] = df_iter['cluster'].apply(lambda x: kategori[x])
-
-    # Buat plot scatter dengan Plotly
-    features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
-    X = df_iter[features].values
-
-    # Gunakan t-SNE untuk visualisasi 2D
-    n_samples = X.shape[0]
-    if n_samples < 3:
-        return '{}'
-    perplexity = min(30, n_samples - 1)
-    try:
-        tsne = TSNE(n_components=2, random_state=42, perplexity=perplexity)
-        X_embedded = tsne.fit_transform(X)
-    except Exception as e:
-        return '{}'
-
-    df_tsne = pd.DataFrame(X_embedded, columns=['tsne_1', 'tsne_2'])
-    df_tsne['cluster'] = df_iter['cluster']
-    df_tsne['cluster_label'] = df_iter['kategori']
-    categories = sorted(df_tsne['cluster_label'].unique())
-    df_tsne['cluster_label'] = pd.Categorical(df_tsne['cluster_label'], 
-                                          categories=categories, 
-                                          ordered=True)
-    fig = px.scatter(df_tsne, x='tsne_1', y='tsne_2', color=df_tsne['cluster_label'],
-                 title=f"Visualisasi Clustering Iterasi {iteration_idx+1}", 
-                 labels={'color': 'Kategori Cluster'})
-    return fig.to_json()
 
 # Rute untuk halaman simulasi
 @app.route('/simulasi', methods=['GET', 'POST'])
 def simulasi():
-    import tempfile
     if request.method == 'POST':
         n_clusters = int(request.form.get('n_clusters', 5))
         m = float(request.form.get('m', 2))
         error = float(request.form.get('error', 0.005))
         maxiter = int(request.form.get('maxiter', 100))
 
-        # Handle file upload
         uploaded_file = request.files.get('data_file')
-        df = None
-        file_name = None
-        if uploaded_file and uploaded_file.filename:
-            file_name = uploaded_file.filename
-            ext = file_name.split('.')[-1].lower()
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.'+ext) as tmp:
-                uploaded_file.save(tmp.name)
-                # Always try Excel first, fallback to CSV
-                try:
-                    if ext in ['xlsx', 'xls']:
-                        df = pd.read_excel(tmp.name)
-                    else:
-                        # Try Excel anyway (sometimes user renames .csv to .xlsx)
-                        try:
-                            df = pd.read_excel(tmp.name)
-                        except Exception:
-                            df = pd.read_csv(tmp.name, sep=';')
-                except Exception:
-                    # If all fails, fallback to CSV
-                    df = pd.read_csv(tmp.name, sep=';')
-        else:
-            try:
-                df = pd.read_excel('data_fitri.xlsx')
-            except Exception:
-                df = pd.read_csv('data_fitri.csv', sep=';')
+        if not uploaded_file or not uploaded_file.filename:
+            flash('File tidak diunggah. Silakan unggah file Excel.', 'danger')
+            return redirect(url_for('simulasi'))
 
-        # Jika file hasil_simulasi.csv (sudah ada cluster, tsne_x, tsne_y), gunakan langsung
-        if set(['cluster', 'kategori', 'tsne_x', 'tsne_y']).issubset(df.columns):
-            # Siapkan data untuk tabel dan t-SNE
-            clusters = df.to_dict(orient='records')
-            # t-SNE plot
-            import plotly.express as px
-            import numpy as np
-            tsne_x = df['tsne_x'].astype(str).str.replace(',', '.', regex=False).astype(float)
-            tsne_y = df['tsne_y'].astype(str).str.replace(',', '.', regex=False).astype(float)
-            fig = px.scatter(
-                x=tsne_x,
-                y=tsne_y,
-                color=df['kategori'],
-                text=df['nama_obat'],
-                labels={'color': 'Kategori'},
-                title='Visualisasi t-SNE dari Data Hasil Simulasi Upload'
-            )
-            final_tsne_json = fig.to_json()
-            # Dummy iteration tables/plots
-            iteration_tables = []
-            iteration_plots = []
-            # Frekuensi
-            frequencies = count_frequencies(df)
-            return render_template(
-                "simulasi.html",
-                clusters=clusters,
-                frequencies=frequencies.to_dict(orient='records'),
-                iterations=iteration_tables,
-                iteration_plots=iteration_plots,
-                final_tsne_json=final_tsne_json,
-                data_preview=df.head(10).to_html(classes='table table-striped'),
-                parameters={
-                    'n_clusters': n_clusters,
-                    'm': m,
-                    'error': error,
-                    'maxiter': maxiter
-                },
-                uploaded_filename=file_name
-            )
+        file_name = uploaded_file.filename
+        try:
+            df = pd.read_excel(uploaded_file)
+        except Exception as e:
+            flash(f'Gagal membaca file Excel: {e}', 'danger')
+            return redirect(url_for('simulasi'))
 
-        # Jika bukan hasil_simulasi.csv, lakukan proses clustering seperti biasa
+        if df is None:
+            flash('Gagal memproses file. Pastikan formatnya benar.', 'danger')
+            return redirect(url_for('simulasi'))
+
         df_clustered, cntr, iterations = fuzzy_c_means_clustering_with_iterations(
             df, n_clusters, m, error, maxiter
         )
+
+        # Hitung t-SNE dan tambahkan ke DataFrame sebelum menyimpan
+        features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+        data = df_clustered[features].values
+        tsne = TSNE(n_components=2, perplexity=min(5, len(df_clustered) - 1), random_state=42, n_iter=300)
+        tsne_results = tsne.fit_transform(data)
+        df_clustered['tsne_x'] = tsne_results[:, 0]
+        df_clustered['tsne_y'] = tsne_results[:, 1]
+
+        # Simpan hasil ke Excel (sekarang dengan koordinat t-SNE)
         save_to_excel(df_clustered, "hasil_simulasi.xlsx")
 
-        iteration_plots = []
-        for i in range(len(iterations)):
-            plot_json = plot_iteration_results(df, iterations, i)
-            iteration_plots.append(plot_json)
-
-        final_tsne_json = plot_tsne_clustering(df_clustered)
-
         iteration_tables = []
-        for i, iteration in enumerate(iterations):
-            table = {
+        for i, it in enumerate(iterations):
+            iteration_tables.append({
                 'iteration': i + 1,
-                'objective_function': iteration['objective_function'],
-                'partition_coefficient': iteration['partition_coefficient'],
-                'error': iteration['error']
-            }
-            iteration_tables.append(table)
+                'objective_function': it['objective_function'],
+                'partition_coefficient': it['partition_coefficient'],
+                'error': it['error']
+            })
 
         frequencies = count_frequencies(df_clustered)
+        final_tsne_json = prepare_tsne_data_for_echarts(df_clustered.copy())
 
+        session['results'] = {
+            'final_tsne_json': final_tsne_json,
+            'clusters': df_clustered.to_dict(orient='records'),
+            'frequencies': frequencies.to_dict(orient='records'),
+            'iterations': iteration_tables,
+            'data_preview': df.head(10).to_html(classes='table table-striped w-full'),
+            'parameters': {'n_clusters': n_clusters, 'm': m, 'error': error, 'maxiter': maxiter},
+            'uploaded_filename': file_name
+        }
+        
+        return redirect(url_for('simulasi'))
+
+    results = session.pop('results', None)
+    if results:
         return render_template(
             "simulasi.html",
-            clusters=df_clustered.to_dict(orient='records'),
-            frequencies=frequencies.to_dict(orient='records'),
-            iterations=iteration_tables,
-            iteration_plots=iteration_plots,
-            final_tsne_json=final_tsne_json,
-            data_preview=df.head(10).to_html(classes='table table-striped'),
-            parameters={
-                'n_clusters': n_clusters,
-                'm': m,
-                'error': error,
-                'maxiter': maxiter
-            },
-            uploaded_filename=file_name
+            clusters=results['clusters'],
+            frequencies=results['frequencies'],
+            iterations=results['iterations'],
+            iteration_plots=[],
+            final_tsne_json=results.get('final_tsne_json', '{}'),
+            data_preview=results['data_preview'],
+            parameters=results['parameters'],
+            uploaded_filename=results['uploaded_filename']
         )
+    else:
+        default_parameters = {
+            'n_clusters': 5, 'm': 2, 'error': 0.005, 'maxiter': 100
+        }
+        return render_template("simulasi.html", parameters=default_parameters, clusters=[], final_tsne_json='{}', data_preview=None, uploaded_filename=None)
 
-    default_parameters = {
-        'n_clusters': 5,
-        'm': 2,
-        'error': 0.005,
-        'maxiter': 100
-    }
-    return render_template("simulasi.html", parameters=default_parameters)
+@app.route('/reset', methods=['POST'])
+def reset_simulation():
+    # Hapus file jika ada
+    file_path = 'hasil_simulasi.xlsx'
+    file_deleted = False
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        file_deleted = True
+
+    # Hapus cache hasil dari session
+    session_cleared = 'results' in session
+    session.pop('results', None)
+
+    if file_deleted or session_cleared:
+        flash('Proses simulasi dan cache hasil telah berhasil direset.', 'success')
+    else:
+        flash('Tidak ada yang perlu direset.', 'info')
+        
+    return redirect(url_for('simulasi'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

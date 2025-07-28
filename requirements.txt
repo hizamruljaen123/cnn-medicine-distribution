@@ -1,0 +1,9 @@
+Flask
+pandas
+numpy
+scikit-fuzzy
+matplotlib
+plotly
+openpyxl
+Flask-Session
+scikit-learn
