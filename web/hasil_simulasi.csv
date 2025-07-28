@@ -1,0 +1,17 @@
+﻿id;nama_obat;satuan;stok_awal;penerimaan;persediaan;pemakaian;sisa_stok;permintaan;wilayah;tahun;cluster;tsne_x;tsne_y;kategori
+1;Aciclovir;400 mg, tablet;1000;8300;9300;8200;1100;9500;Tanjung Selamat;2021;1;-26,86530304;0,184087023;Rendah
+2;Aciclovir;400 mg, tablet;1100;8500;9600;8700;900;9700;Tanjung Selamat;2022;1;-24,9349823;0,600883543;Rendah
+3;Aciclovir;400 mg, tablet;900;9400;10300;9100;1200;10600;Tanjung Selamat;2023;1;-19,1198616;1,794484973;Rendah
+4;Albendazol;200 mg/5 ml, Botol;1000;7600;8600;7550;1050;8800;Tanjung Selamat;2021;1;-32,66611481;-1,644844174;Rendah
+5;Albendazol;200 mg/5 ml, Botol;1050;7800;8850;8300;550;9000;Tanjung Selamat;2022;1;-29,52564049;-1,697190285;Rendah
+6;Albendazol;200 mg/5 ml, Botol;550;8700;9250;8400;850;9900;Tanjung Selamat;2023;1;-24,99638748;-1,196641445;Rendah
+7;Alpamol;Kaplet;28700;18400;47100;17800;29300;19600;Tanjung Selamat;2021;0;22,69351959;22,34170341;Sangat Rendah
+8;Alpamol;Kaplet;29300;18800;48100;19300;28800;20000;Tanjung Selamat;2022;0;23,11455345;21,78670311;Sangat Rendah
+9;Alpamol;Kaplet;28800;19700;48500;19600;28900;22000;Tanjung Selamat;2023;0;23,12185478;22,47193909;Sangat Rendah
+10;Ambroxol;30 mg, tablet;2700;9100;11800;9020;2780;10200;Tanjung Selamat;2021;1;-17,01973724;10,95312595;Rendah
+11;Ambroxol;30 mg, tablet;2780;9300;12080;9800;2280;10500;Tanjung Selamat;2022;1;-15,35814285;9,465303421;Rendah
+12;Ambroxol;30 mg, tablet;2280;10200;12480;9900;2580;11500;Tanjung Selamat;2023;1;-10,44879913;5,978784561;Rendah
+13;Amlodipin;10 mg, tablet;8600;12200;20800;12000;8800;13400;Tanjung Selamat;2021;3;4,897495747;33,22941971;Tinggi
+14;Amlodipin;10 mg, tablet;8800;12500;21300;13000;8300;13700;Tanjung Selamat;2022;3;5,832791805;33,29097748;Tinggi
+15;Amlodipin;10 mg, tablet;8300;13400;21700;13200;8500;15000;Tanjung Selamat;2023;3;7,046998978;33,22162628;Tinggi
+16;Amoxicillin;500 mg, tablet;27600;132600;160200;131950;28250;133800;Tanjung Selamat;2021;2;51,16868973;46,2982254;Sedang
