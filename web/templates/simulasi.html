@@ -284,7 +284,7 @@
                                                     {% if cluster.tahun == year %}
                                                     <tr class="{% if loop.index % 2 == 0 %}bg-white hover:bg-gray-50{% else %}bg-gray-50 hover:bg-gray-100{% endif %} transition-colors duration-200">
                                                         <td class="py-3 px-4 border-b border-gray-200 font-medium">{{ cluster.wilayah }}</td>
-                                                        <td class="py-3 px-4 border-b border-gray-200">{{ cluster.obat }}</td>
+                                                        <td class="py-3 px-4 border-b border-gray-200">{{ cluster.nama_obat }}</td>
                                                         <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.stok_awal }}</td>
                                                         <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.penerimaan }}</td>
                                                         <td class="py-3 px-4 border-b border-gray-200 text-center">{{ cluster.persediaan }}</td>
@@ -298,12 +298,11 @@
                                                                 {% elif cluster.cluster == 2 %}bg-yellow-100 text-yellow-800
                                                                 {% elif cluster.cluster == 3 %}bg-red-100 text-red-800
                                                                 {% else %}bg-purple-100 text-purple-800{% endif %}">
-                                                                {{ cluster.cluster }}
-                                                                {% if cluster.cluster == 0 %} (Sangat Rendah)
-                                                                {% elif cluster.cluster == 1 %} (Rendah)
-                                                                {% elif cluster.cluster == 2 %} (Sedang)
-                                                                {% elif cluster.cluster == 3 %} (Tinggi)
-                                                                {% elif cluster.cluster == 4 %} (Sangat Tinggi)
+                                                                {% if cluster.cluster == 0 %} Sangat Rendah
+                                                                {% elif cluster.cluster == 1 %} Rendah
+                                                                {% elif cluster.cluster == 2 %} Sedang
+                                                                {% elif cluster.cluster == 3 %} Tinggi
+                                                                {% elif cluster.cluster == 4 %} Sangat Tinggi
                                                                 {% endif %}
                                                             </span>
                                                         </td>
