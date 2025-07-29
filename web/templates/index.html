@@ -8,46 +8,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 
-    <title>Hasil Clustering Fuzzy C-Means</title>
+    <title>Dashboard Hasil Clustering</title>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        /* Loading Screen */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(52, 73, 94, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Fade out animation */
-        .fade-out {
-            opacity: 0;
-        }
+        body { font-family: 'Poppins', sans-serif; }
+        .sticky-top { top: 0; z-index: 1020; }
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(52, 73, 94, 0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-in-out; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .fade-out { opacity: 0; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -55,540 +25,187 @@
     <div id="loading-screen">
         <div class="text-center">
             <div class="loader mb-3"></div>
-            <h3 class="text-white mt-3">Loading...</h3>
-            <p class="text-white text-sm">Memuat data clustering...</p>
+            <h3 class="text-white mt-3">Memuat Dasbor...</h3>
         </div>
     </div>
 
     <!-- Navbar -->
-    <nav class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg">
-        <div class="container mx-auto px-4">
+    <nav class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white shadow-lg sticky-top">
+        <div class="container-fluid mx-auto px-4">
             <div class="flex justify-between items-center py-3">
-                <a class="flex items-center space-x-2 text-xl font-bold" href="#">
+                <a class="flex items-center space-x-2 text-xl font-bold" href="/">
                     <i class="fas fa-chart-pie text-blue-300"></i>
                     <span>Analisis Clustering</span>
                 </a>
-                <button class="md:hidden focus:outline-none" type="button" id="mobile-menu-button">
-                    <i class="fas fa-bars text-white text-xl"></i>
-                </button>
                 <div class="hidden md:flex space-x-6">
                     <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium border-b-2 border-blue-400" href="/">
-                        <i class="fas fa-home mr-1"></i> Hasil Clustering
+                        <i class="fas fa-home mr-1"></i> Dashboard
                     </a>
                     <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium" href="/simulasi">
                         <i class="fas fa-flask mr-1"></i> Simulasi
-                    </a>
-                    <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium" href="#">
-                        <i class="fas fa-info-circle mr-1"></i> Tentang
-                    </a>
-                    <a class="text-white hover:text-blue-300 transition-colors duration-300 font-medium" href="#">
-                        <i class="fas fa-envelope mr-1"></i> Kontak
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu (Hidden by default) -->
-    <div class="md:hidden hidden bg-indigo-900 text-white" id="mobile-menu">
-        <div class="container mx-auto px-4 py-2">
-            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="/">
-                <i class="fas fa-home mr-1"></i> Hasil Clustering
-            </a>
-            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="/simulasi">
-                <i class="fas fa-flask mr-1"></i> Simulasi
-            </a>
-            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="#">
-                <i class="fas fa-info-circle mr-1"></i> Tentang
-            </a>
-            <a class="block py-2 hover:bg-indigo-800 px-2 rounded transition-colors duration-300" href="#">
-                <i class="fas fa-envelope mr-1"></i> Kontak
-            </a>
-        </div>
-    </div>
-
-    <div class="container-fluid">
-        <div class="flex flex-wrap">
-            <!-- Sidebar -->
-            <nav id="sidebar" class="w-full md:w-1/5 lg:w-1/6 bg-gradient-to-b from-indigo-900 to-blue-800 text-white shadow-lg transform transition-all duration-300 ease-in-out">
-                <div class="p-4">
-                    <div class="flex items-center justify-center mb-6 border-b border-blue-700 pb-4">
-                        <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center shadow-lg">
-                            <i class="fas fa-user-cog text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h5 class="font-medium">Admin Panel</h5>
-                            <p class="text-xs text-blue-300">Dashboard Analisis</p>
-                        </div>
-                    </div>
-                    <ul class="space-y-2">
-                        <li class="group">
-                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#">
-                                <i class="fas fa-chart-line w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
-                                <span>Ringkasan</span>
-                            </a>
-                        </li>
-                        <li class="group">
-                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#">
-                                <i class="fas fa-database w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
-                                <span>Data Mentah</span>
-                            </a>
-                        </li>
-                        <li class="group">
-                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#">
-                                <i class="fas fa-chart-pie w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
-                                <span>Visualisasi</span>
-                            </a>
-                        </li>
-                        <li class="group">
-                            <a class="flex items-center p-3 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:translate-x-2" href="#">
-                                <i class="fas fa-file-alt w-5 h-5 mr-3 text-blue-300 group-hover:text-white transition-colors duration-300"></i>
-                                <span>Laporan</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <!-- Main Content -->
-            <main role="main" class="w-full md:w-4/5 lg:w-5/6 p-4 md:p-6">
-                <div class="bg-white rounded-lg shadow-lg p-6 mb-6 transform transition-all duration-500 hover:shadow-xl">
-                    <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
-                        <h1 class="text-2xl font-bold text-gray-800 flex items-center">
-                            <i class="fas fa-chart-bar text-blue-600 mr-2"></i>
-                            Hasil Clustering Fuzzy C-Means
-                        </h1>
-                        <div class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full flex items-center">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Dashboard Analisis
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <!-- t-SNE Visualization Card -->
-                        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-4 py-3">
-                                <h3 class="text-white font-medium flex items-center">
-                                    <i class="fas fa-project-diagram mr-2"></i>
-                                    Visualisasi Clustering dengan t-SNE
-                                </h3>
-                            </div>
-                            <div class="p-4">
-                                <div id="tsne-plot" class="w-full h-64 md:h-80"></div>
-                            </div>
-                        </div>
-
-                        <!-- Frequency Chart Card -->
-                        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 px-4 py-3">
-                                <h3 class="text-white font-medium flex items-center">
-                                    <i class="fas fa-chart-line mr-2"></i>
-                                    Frekuensi Pertahun
-                                </h3>
-                            </div>
-                            <div class="p-4">
-                                <div id="frequency-plot" class="w-full h-64 md:h-80"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Map Card -->
-                    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden mb-8">
-                        <div class="bg-gradient-to-r from-green-600 to-teal-700 px-4 py-3">
-                            <h3 class="text-white font-medium flex items-center">
-                                <i class="fas fa-map-marked-alt mr-2"></i>
-                                Mapping Puskesmas
-                            </h3>
-                        </div>
-                        <div class="p-4">
-                            <div id="map" class="w-full h-96 rounded-lg"></div>
-                        </div>
-                    </div>
-
-                    <!-- Frequency Table Card -->
-                    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                        <div class="bg-gradient-to-r from-purple-600 to-pink-700 px-4 py-3">
-                            <h2 class="text-white font-medium flex items-center">
-                                <i class="fas fa-table mr-2"></i>
-                                Frekuensi Kategori per Wilayah per Tahun
-                            </h2>
-                        </div>
-                        <div class="p-4">
-                            <ul class="flex flex-wrap border-b border-gray-200" id="tabNav"></ul>
-                            <div class="mt-4" id="tabContent"></div>
-                        </div>
+    <div class="container-fluid p-4">
+        <!-- Main Content -->
+        <main role="main">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
+                    <h1 class="text-2xl font-bold text-gray-800"><i class="fas fa-chart-bar text-blue-600 mr-2"></i>Dashboard Hasil Clustering</h1>
+                    <div class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+                        <i class="fas fa-info-circle mr-1"></i>Data dari <code>hasil_simulasi.xlsx</code>
                     </div>
                 </div>
-            </main>
-        </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow-md"><div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-4 py-3"><h3 class="text-white font-medium"><i class="fas fa-project-diagram mr-2"></i>Visualisasi t-SNE</h3></div><div class="p-4"><div id="tsne-plot" class="w-full h-80"></div></div></div>
+                    <div class="bg-white rounded-lg shadow-md"><div class="bg-gradient-to-r from-indigo-600 to-purple-700 px-4 py-3"><h3 class="text-white font-medium"><i class="fas fa-chart-line mr-2"></i>Frekuensi Kategori per Tahun</h3></div><div class="p-4"><div id="frequency-plot" class="w-full h-80"></div></div></div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md mb-6"><div class="bg-gradient-to-r from-green-600 to-teal-700 px-4 py-3"><h3 class="text-white font-medium"><i class="fas fa-map-marked-alt mr-2"></i>Peta Sebaran Puskesmas</h3></div><div class="p-4"><div id="map" class="w-full h-96 rounded-lg"></div></div></div>
+
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="bg-gradient-to-r from-gray-700 to-gray-900 px-4 py-3 flex justify-between items-center">
+                        <h2 class="text-white font-medium"><i class="fas fa-table mr-2"></i>Data Lengkap Hasil Clustering</h2>
+                        <input type="text" id="tableSearch" class="form-control form-control-sm w-1/3" placeholder="Cari dalam tabel...">
+                    </div>
+                    <div class="p-4 overflow-auto" style="max-height: 600px;">
+                        <table class="table table-striped table-hover table-sm w-full" id="dataTable">
+                            <thead class="thead-dark sticky-top">
+                                <tr>
+                                    {% if clusters and clusters|length > 0 %}{% for key in clusters[0].keys() %}<th>{{ key }}</th>{% endfor %}{% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in clusters %}
+                                    <tr>
+                                        {% for value in row.values() %}<td>{{ value }}</td>{% endfor %}
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="100%" class="text-center p-4">Data tidak tersedia. Silakan jalankan simulasi terlebih dahulu.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // Loading Screen
         document.addEventListener('DOMContentLoaded', function() {
-            // Simulate loading time (you can remove this setTimeout in production)
-            setTimeout(function() {
-                const loadingScreen = document.getElementById('loading-screen');
-                loadingScreen.classList.add('fade-out');
-                setTimeout(function() {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }, 1500); // Adjust time as needed
-        });
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.classList.add('fade-out');
+            setTimeout(() => loadingScreen.style.display = 'none', 500);
 
-        // Mobile Menu Toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
+            // Inisialisasi ECharts
+            const tsneChart = echarts.init(document.getElementById('tsne-plot'));
+            const frequencyChart = echarts.init(document.getElementById('frequency-plot'));
 
-        // Sidebar Hover Effect
-        const sidebar = document.getElementById('sidebar');
-        sidebar.addEventListener('mouseenter', function() {
-            this.classList.add('shadow-2xl');
-            this.classList.add('scale-102');
-        });
-        sidebar.addEventListener('mouseleave', function() {
-            this.classList.remove('shadow-2xl');
-            this.classList.remove('scale-102');
-        });
+            // Opsi default untuk t-SNE
+            const tsneOption = {
+                title: { text: 'Visualisasi Clustering t-SNE', left: 'center', textStyle: { fontFamily: 'Poppins' } },
+                tooltip: { trigger: 'item', formatter: params => `<b>${params.seriesName}</b><br/>${params.data.name}` },
+                legend: { orient: 'vertical', left: 'left', data: [] },
+                xAxis: { type: 'value', name: 't-SNE 1' },
+                yAxis: { type: 'value', name: 't-SNE 2' },
+                series: [],
+                grid: { left: '15%' }
+            };
 
-        // Plot Data
-        var plotTsneData = {{ plot_tsne_json|safe }};
-        var plotFrequenciesData = {{ plot_frequencies_json|safe }};
+            // Opsi default untuk Frekuensi
+            const frequencyOption = {
+                title: { text: 'Frekuensi Kategori per Tahun', left: 'center', textStyle: { fontFamily: 'Poppins' } },
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: { top: 'bottom', data: [] },
+                xAxis: { type: 'category', data: [] },
+                yAxis: { type: 'value', name: 'Jumlah' },
+                series: [],
+                grid: { left: '10%', right: '10%', bottom: '15%' }
+            };
 
-        // Apply custom styling to plots
-        const plotLayout = {
-            font: {
-                family: 'Poppins, sans-serif'
-            },
-            margin: {
-                l: 50,
-                r: 30,
-                t: 30,
-                b: 50
-            },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            autosize: true
-        };
+            // Render t-SNE Chart
+            try {
+                const tsneData = JSON.parse('{{ echarts_tsne_json|safe }}');
+                if (tsneData && tsneData.series && tsneData.series.length > 0) {
+                    tsneOption.legend.data = tsneData.legend.data;
+                    tsneOption.series = tsneData.series;
+                    tsneChart.setOption(tsneOption);
+                } else {
+                    document.getElementById('tsne-plot').innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">Data t-SNE tidak tersedia.</div>';
+                }
+            } catch (e) {
+                console.error("Error rendering t-SNE chart:", e);
+                document.getElementById('tsne-plot').innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">Gagal memuat grafik t-SNE.</div>';
+            }
 
-        // Merge custom layout with existing layout
-        plotTsneData.layout = {...plotTsneData.layout, ...plotLayout};
-        plotFrequenciesData.layout = {...plotFrequenciesData.layout, ...plotLayout};
+            // Render Frequency Chart
+            try {
+                const freqData = JSON.parse('{{ echarts_freq_json|safe }}');
+                if (freqData && freqData.series && freqData.series.length > 0) {
+                    frequencyOption.legend.data = freqData.legend.data;
+                    frequencyOption.xAxis.data = freqData.xAxis.data;
+                    frequencyOption.series = freqData.series;
+                    frequencyChart.setOption(frequencyOption);
+                } else {
+                    document.getElementById('frequency-plot').innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">Data frekuensi tidak tersedia.</div>';
+                }
+            } catch (e) {
+                console.error("Error rendering frequency chart:", e);
+                document.getElementById('frequency-plot').innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">Gagal memuat grafik frekuensi.</div>';
+            }
 
-        // Create plots with animation
-        Plotly.newPlot('tsne-plot', plotTsneData).then(function() {
-            // Add animation when plot is ready
-            document.getElementById('tsne-plot').classList.add('animate-fadeIn');
-        });
+            var map = L.map("map").setView([3.75, 98.5], 9);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap contributors &copy; CARTO' }).addTo(map);
 
-        Plotly.newPlot('frequency-plot', plotFrequenciesData).then(function() {
-            // Add animation when plot is ready
-            document.getElementById('frequency-plot').classList.add('animate-fadeIn');
-        });
-
-        function initMap() {
-            // Inisialisasi peta Leaflet dengan styling yang lebih modern
-            var map = L.map("map", {
-                zoomControl: false, // We'll add it in a better position
-                attributionControl: false // We'll add it in a better position
-            }).setView([3.75, 98.5], 9); // Pusatkan di wilayah Sumatera Utara
-
-            // Add zoom control to the top-right
-            L.control.zoom({
-                position: 'topright'
-            }).addTo(map);
-
-            // Add attribution control to the bottom-right
-            L.control.attribution({
-                position: 'bottomright',
-                prefix: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-
-            // Use a more modern tile layer
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(map);
-
-            // Ambil data dari API Flask dan tambahkan marker
             fetch("/api/coordinates")
                 .then(response => response.json())
                 .then(data => {
-                    if (!data || Object.keys(data).length === 0) {
-                        throw new Error("Data tidak ditemukan atau kosong.");
-                    }
-
+                    if (!data || Object.keys(data).length === 0) return;
                     Object.entries(data).forEach(([nama, info]) => {
-                        if (!info.coordinates || !Array.isArray(info.coordinates) || info.coordinates.length < 2) return;
-
+                        if (!info.coordinates || info.coordinates.length < 2) return;
                         let [lat, lon] = info.coordinates;
-                        let frequencies = info.frequencies || {};
-
-                        // Create a custom icon for markers
-                        let customIcon = L.divIcon({
-                            className: 'custom-div-icon',
-                            html: `<div class='marker-pin bg-blue-600 shadow-lg'></div>`,
-                            iconSize: [30, 42],
-                            iconAnchor: [15, 42]
-                        });
-
-                        let chartId = `chart-${nama.replace(/\s+/g, '-')}`;
-                        let popupContent = `
-                            <div class="popup-container" style="width: 500px; max-height: 400px; overflow-y: auto; font-family: 'Poppins', sans-serif;">
-                                <div class="popup-header bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-3 rounded-t">
-                                    <h4 class="m-0 font-medium">Puskesmas ${nama}</h4>
-                                    <p class="m-0 text-xs text-blue-200">Lat: ${lat}, Lon: ${lon}</p>
-                                </div>
-                                <div class="popup-body p-3">
-                                    <div id="${chartId}" style="width: 100%; height: 300px;"></div>
-                        `;
-
-                        let tableContent = `
-                            <div class="mt-3">
-                                <table class="w-full border-collapse border border-gray-300 text-sm">
-                                    <thead class="bg-gray-200">
-                                        <tr>
-                                            <th class="border border-gray-300 p-2">Tahun</th>
-                        `;
-
-                        let kategoriSet = new Set();
-
-                        Object.values(frequencies).forEach(kategori => {
-                            Object.keys(kategori || {}).forEach(k => kategoriSet.add(k));
-                        });
-
-                        let kategoriList = Array.from(kategoriSet);
-                        kategoriList.forEach(k => {
-                            tableContent += `<th class="border border-gray-300 p-2">${k}</th>`;
-                        });
-                        tableContent += "</tr></thead><tbody>";
-
-                        Object.entries(frequencies).forEach(([tahun, kategori]) => {
-                            tableContent += `<tr><td class="border border-gray-300 p-2 font-medium">${tahun}</td>`;
-                            kategoriList.forEach(k => {
-                                tableContent += `<td class="border border-gray-300 p-2 text-center">${kategori?.[k] || 0}</td>`;
+                        let marker = L.marker([lat, lon]).addTo(map);
+                        let popupContent = `<div class="font-sans"><strong>${nama}</strong><hr class="my-1">`;
+                        if (info.frequencies) {
+                            popupContent += '<ul class="list-disc list-inside text-xs">';
+                            Object.entries(info.frequencies).forEach(([tahun, cats]) => {
+                                popupContent += `<li><strong>${tahun}:</strong> ` + Object.entries(cats).map(([k, v]) => `${k} (${v})`).join(', ') + '</li>';
                             });
-                            tableContent += "</tr>";
-                        });
-
-                        tableContent += "</tbody></table></div>";
-                        popupContent += `${tableContent}</div></div>`;
-
-                        let marker = L.marker([lat, lon], {icon: customIcon}).addTo(map);
-                        marker.bindPopup(popupContent, { 
-                            maxWidth: 500,
-                            className: 'custom-popup'
-                        });
-
-                        marker.on("popupopen", () => {
-                            let years = Object.keys(frequencies || {});
-                            let traces = [];
-
-                            kategoriList.forEach(kategori => {
-                                let values = years.map(year => frequencies[year]?.[kategori] || 0);
-                                traces.push({
-                                    x: years,
-                                    y: values,
-                                    name: kategori,
-                                    type: "bar"
-                                });
-                            });
-
-                            let layout = {
-                                title: `Distribusi Frekuensi - ${nama}`,
-                                barmode: "stack",
-                                xaxis: { title: "Tahun" },
-                                yaxis: { title: "Frekuensi" },
-                                font: {
-                                    family: 'Poppins, sans-serif'
-                                },
-                                margin: {
-                                    l: 50,
-                                    r: 30,
-                                    t: 50,
-                                    b: 50
-                                },
-                                paper_bgcolor: 'rgba(0,0,0,0)',
-                                plot_bgcolor: 'rgba(0,0,0,0)'
-                            };
-
-                            Plotly.newPlot(chartId, traces, layout);
-                        });
+                            popupContent += '</ul>';
+                        }
+                        marker.bindPopup(popupContent + '</div>');
                     });
-                })
-                .catch(error => console.error("Error fetching data:", error));
-        }
+                }).catch(error => console.error("Error fetching map data:", error));
 
-        initMap();
-
-        function renderTabs(data) {
-            if (!data || Object.keys(data).length === 0) {
-                console.error("Data tidak ditemukan atau kosong.");
-                return;
-            }
-
-            let tahunSet = new Set();
-            Object.values(data).forEach(lokasi => {
-                if (lokasi.frequencies && typeof lokasi.frequencies === "object") {
-                    Object.keys(lokasi.frequencies).forEach(tahun => tahunSet.add(tahun));
+            document.getElementById('tableSearch').addEventListener('keyup', function() {
+                let filter = this.value.toUpperCase();
+                let rows = document.querySelector("#dataTable tbody").rows;
+                for (let row of rows) {
+                    let text = row.innerText.toUpperCase();
+                    row.style.display = text.indexOf(filter) > -1 ? "" : "none";
                 }
             });
-
-            let tahunArray = Array.from(tahunSet).sort();
-            let tabNav = document.getElementById("tabNav");
-            let tabContent = document.getElementById("tabContent");
-
-            if (!tabNav || !tabContent) {
-                console.error("Element tabNav atau tabContent tidak ditemukan.");
-                return;
-            }
-
-            tabNav.innerHTML = "";
-            tabContent.innerHTML = "";
-
-            let firstTab = true;
-
-            tahunArray.forEach((tahun) => {
-                let activeClass = firstTab ? "border-b-2 border-purple-500 text-purple-600" : "text-gray-600 hover:text-purple-600";
-
-                tabNav.innerHTML += `
-                    <li class="mr-2">
-                        <a class="inline-block px-4 py-2 font-medium ${activeClass} transition-colors duration-300 tab-link" 
-                           data-tab="tab-${tahun}" href="javascript:void(0);">
-                            <i class="fas fa-calendar-alt mr-1"></i> ${tahun}
-                        </a>
-                    </li>
-                `;
-
-                let displayStyle = firstTab ? "block" : "hidden";
-
-                let contentHtml = `
-                    <div id="tab-${tahun}" class="tab-content ${displayStyle} animate-fadeIn">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-table text-purple-500 mr-2 text-xl"></i>
-                            <h3 class="text-lg font-medium text-gray-800">Data Tahun ${tahun}</h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full bg-white rounded-lg overflow-hidden shadow-md">
-                                <thead class="bg-gradient-to-r from-purple-600 to-pink-700 text-white">
-                                    <tr>
-                                        <th class="py-3 px-4 text-left">Wilayah</th>
-                                        <th class="py-3 px-4 text-center">Sangat Rendah</th>
-                                        <th class="py-3 px-4 text-center">Rendah</th>
-                                        <th class="py-3 px-4 text-center">Sedang</th>
-                                        <th class="py-3 px-4 text-center">Tinggi</th>
-                                        <th class="py-3 px-4 text-center">Sangat Tinggi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                `;
-
-                Object.entries(data).forEach(([lokasi, detail], index) => {
-                    let rowData = {
-                        "Sangat Rendah": detail.frequencies?.[tahun]?.["Sangat Rendah"] || 0,
-                        "Rendah": detail.frequencies?.[tahun]?.["Rendah"] || 0,
-                        "Sedang": detail.frequencies?.[tahun]?.["Sedang"] || 0,
-                        "Tinggi": detail.frequencies?.[tahun]?.["Tinggi"] || 0,
-                        "Sangat Tinggi": detail.frequencies?.[tahun]?.["Sangat Tinggi"] || 0,
-                    };
-
-                    let rowClass = index % 2 === 0 ? "bg-white hover:bg-gray-50" : "bg-gray-50 hover:bg-gray-100";
-
-                    contentHtml += `
-                        <tr class="${rowClass} transition-colors duration-200">
-                            <td class="py-3 px-4 border-b border-gray-200 font-medium">${lokasi}</td>
-                            <td class="py-3 px-4 border-b border-gray-200 text-center">${rowData["Sangat Rendah"]}</td>
-                            <td class="py-3 px-4 border-b border-gray-200 text-center">${rowData["Rendah"]}</td>
-                            <td class="py-3 px-4 border-b border-gray-200 text-center">${rowData["Sedang"]}</td>
-                            <td class="py-3 px-4 border-b border-gray-200 text-center">${rowData["Tinggi"]}</td>
-                            <td class="py-3 px-4 border-b border-gray-200 text-center">${rowData["Sangat Tinggi"]}</td>
-                        </tr>
-                    `;
-                });
-
-                contentHtml += `</tbody></table></div></div>`;
-                tabContent.innerHTML += contentHtml;
-
-                firstTab = false;
-            });
-
-            // Add tab switching functionality
-            document.querySelectorAll('.tab-link').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active class from all tabs
-                    document.querySelectorAll('.tab-link').forEach(t => {
-                        t.classList.remove('border-b-2', 'border-purple-500', 'text-purple-600');
-                        t.classList.add('text-gray-600', 'hover:text-purple-600');
-                    });
-
-                    // Add active class to clicked tab
-                    this.classList.add('border-b-2', 'border-purple-500', 'text-purple-600');
-                    this.classList.remove('text-gray-600', 'hover:text-purple-600');
-
-                    // Hide all tab content
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.add('hidden');
-                        content.classList.remove('block');
-                    });
-
-                    // Show the selected tab content
-                    const tabId = this.getAttribute('data-tab');
-                    const tabContent = document.getElementById(tabId);
-                    tabContent.classList.remove('hidden');
-                    tabContent.classList.add('block', 'animate-fadeIn');
-                });
-            });
-        }
-
-        fetch("/api/coordinates")
-            .then(response => response.json())
-            .then(data => renderTabs(data))
-            .catch(error => console.error("Error fetching data:", error));
-
-        // Add animation class
-        document.head.insertAdjacentHTML('beforeend', `
-            <style>
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fadeIn {
-                    animation: fadeIn 0.5s ease-out forwards;
-                }
-                .scale-102 {
-                    transform: scale(1.02);
-                }
-                .marker-pin {
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 50% 50% 50% 0;
-                    position: absolute;
-                    transform: rotate(-45deg);
-                    left: 50%;
-                    top: 50%;
-                    margin: -15px 0 0 -15px;
-                }
-                .custom-popup .leaflet-popup-content-wrapper {
-                    border-radius: 8px;
-                    padding: 0;
-                    overflow: hidden;
-                }
-                .custom-popup .leaflet-popup-content {
-                    margin: 0;
-                }
-                .custom-popup .leaflet-popup-tip {
-                    background: linear-gradient(to right, #2563eb, #4f46e5);
-                }
-            </style>
-        `);
+        });
     </script>
 </body>
 </html>

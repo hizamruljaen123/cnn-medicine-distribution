@@ -93,17 +93,77 @@ def save_to_excel(df, file_name="hasil_fuzzy_cmeans.xlsx"):
     except Exception as e:
         print(f"Gagal menyimpan file: {e}")
 
-# Load hasil clustering dari Excel jika sudah ada
-def load_existing_clustering(file_name="hasil_fuzzy_cmeans.xlsx"):
-    if os.path.exists(file_name):
-        try:
+# Load hasil clustering dari file jika sudah ada
+def load_existing_clustering(file_name="hasil_simulasi.xlsx"):
+    if not os.path.exists(file_name):
+        return None
+
+    df = None
+    try:
+        # Prioritaskan membaca sebagai Excel jika ekstensi .xlsx
+        if file_name.endswith('.xlsx'):
             df = pd.read_excel(file_name)
-            print("Menggunakan hasil clustering yang sudah ada.")
+            # Periksa apakah hasilnya hanya satu kolom, yang menandakan format CSV tersembunyi
+            if len(df.columns) == 1:
+                print("File .xlsx terdeteksi memiliki format CSV, mencoba membaca ulang...")
+                # Coba baca file yang sama sebagai CSV
+                df = pd.read_csv(file_name, sep=';', decimal=',')
+        # Jika file adalah .csv, baca dengan format yang benar
+        elif file_name.endswith('.csv'):
+            df = pd.read_csv(file_name, sep=';', decimal=',')
+        
+        if df is not None:
+            print(f"Berhasil memuat data dari {file_name}")
             return df
-        except Exception as e:
-            print(f"Gagal membaca file: {e}")
+
+    except Exception as e:
+        print(f"Terjadi kesalahan saat membaca {file_name}: {e}")
+        # Jika semua gagal, coba metode paling dasar sebagai fallback
+        try:
+            print("Mencoba metode fallback untuk membaca file...")
+            df = pd.read_csv(file_name, sep=';', decimal=',')
+            print(f"Berhasil memuat data dari {file_name} dengan metode fallback.")
+            return df
+        except Exception as e2:
+            print(f"Gagal total memuat data dari {file_name}: {e2}")
+
     return None
 # Fungsi untuk menghitung dan membuat plot frekuensi tingkat kebutuhan per tahun
+def prepare_frequencies_for_echarts(df):
+    if df is None or df.empty:
+        return {}
+
+    # Hitung frekuensi
+    freq_df = df.groupby(['tahun', 'kategori']).size().reset_index(name='frekuensi')
+    
+    # Dapatkan daftar tahun dan kategori unik
+    years = sorted(freq_df['tahun'].unique().tolist())
+    categories = sorted(freq_df['kategori'].unique().tolist())
+
+    series_data = []
+    for category in categories:
+        # Ambil data untuk kategori ini
+        category_data = freq_df[freq_df['kategori'] == category]
+        # Buat daftar frekuensi untuk setiap tahun
+        freq_by_year = [int(category_data[category_data['tahun'] == year]['frekuensi'].values[0]) if year in category_data['tahun'].values else 0 for year in years]
+        
+        series_data.append({
+            'name': category,
+            'type': 'bar',
+            'stack': 'total',
+            'emphasis': {
+                'focus': 'series'
+            },
+            'data': freq_by_year
+        })
+
+    return {
+        'legend': {'data': categories},
+        'xAxis': {'type': 'category', 'data': years},
+        'series': series_data
+    }
+
+
 def plot_frequencies_per_year(df):
     # Hitung jumlah status tingkat kebutuhan per tahun
     frequency_table = df.groupby(['tahun', 'kategori']).size().reset_index(name='frekuensi')
@@ -181,27 +241,64 @@ def count_frequencies_per_year(df):
 
     return frequency_dict
 
+# Fungsi untuk menyiapkan data t-SNE untuk ECharts
+def prepare_tsne_for_echarts(df):
+    if 'tsne_x' not in df.columns or 'tsne_y' not in df.columns:
+        return {}
+
+    categories = df['kategori'].unique().tolist()
+    series_data = []
+
+    for category in categories:
+        category_df = df[df['kategori'] == category]
+        data_points = []
+        for _, row in category_df.iterrows():
+            # Pastikan tsne_x dan tsne_y adalah float
+            tsne_x = float(row['tsne_x']) if pd.notna(row['tsne_x']) else 0.0
+            tsne_y = float(row['tsne_y']) if pd.notna(row['tsne_y']) else 0.0
+            data_points.append({
+                'value': [tsne_x, tsne_y],
+                'name': f"{row['nama_obat']} ({row['wilayah']}, {row['tahun']})"
+            })
+        
+        series_data.append({
+            'name': category,
+            'type': 'scatter',
+            'data': data_points,
+            'emphasis': {
+                'focus': 'series'
+            }
+        })
+
+    return {
+        'legend': {'data': categories},
+        'series': series_data
+    }
+
 @app.route('/')
 def index():
-    file_path = "data_fitri.xlsx"  # Ganti dengan path file yang benar
-    result_file = "hasil_fuzzy_cmeans.xlsx"
+    simulasi_file = "hasil_simulasi.xlsx"  # Sesuaikan dengan nama file yang benar
 
-    df_clustered = load_existing_clustering(result_file)
+    # Coba baca hasil dari simulasi
+    df_simulasi = load_existing_clustering(simulasi_file)
 
-    if df_clustered is None:
-        df = load_data(file_path)
-        df_clustered, cntr = fuzzy_c_means_clustering(df)
-        save_to_excel(df_clustered, result_file)
+    if df_simulasi is None:
+        # Jika file simulasi tidak ada, tampilkan halaman kosong dengan pesan
+        flash('File hasil_simulasi.xlsx tidak ditemukan. Silakan jalankan simulasi terlebih dahulu.', 'warning')
+        return render_template("index.html", 
+                               clusters=[], 
+                               plot_tsne_json='{}', 
+                               plot_frequencies_json='{}')
 
-    frequencies = count_frequencies(df_clustered)
-    plot_url = plot_fuzzy_cmeans(df_clustered, cntr) if 'cntr' in locals() else ""
-    plot_frequencies_json = plot_frequencies_per_year(df_clustered)  # JSON Plotly untuk grafik frekuensi
+    # Siapkan data untuk ECharts
+    echarts_tsne_json = json.dumps(prepare_tsne_for_echarts(df_simulasi))
+    echarts_freq_json = json.dumps(prepare_frequencies_for_echarts(df_simulasi))
 
+    # Kirim data ke template
     return render_template("index.html", 
-                           clusters=df_clustered.to_dict(orient='records'), 
-                           frequencies=frequencies.to_dict(orient='records'), 
-                           plot_url=plot_url,
-                           plot_frequencies_json=plot_frequencies_json)  # Kirim ke template
+                           clusters=df_simulasi.to_dict(orient='records'), 
+                           echarts_tsne_json=echarts_tsne_json,
+                           echarts_freq_json=echarts_freq_json)
 
 
 @app.route('/api/coordinates', methods=['GET'])
@@ -214,8 +311,8 @@ def get_coordinates():
         with open(file_path, "r") as file:
             coordinates_data = json.load(file)
 
-        # Menghitung jumlah frekuensi per kategori setiap wilayah per tahun
-        result_file = "hasil_fuzzy_cmeans.xlsx"
+        # Menghitung jumlah frekuensi per kategori setiap wilayah per tahun dari hasil simulasi
+        result_file = "hasil_simulasi.xlsx"  # Sesuaikan dengan nama file yang benar
         df_clustered = load_existing_clustering(result_file)
         frequency_per_year = count_frequencies_per_year(df_clustered) if df_clustered is not None else {}
 
