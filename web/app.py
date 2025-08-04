@@ -85,18 +85,55 @@ def plot_fuzzy_cmeans(df, cntr):
 
     return plot_url
 
-def save_to_excel(df, file_name="hasil_fuzzy_cmeans.xlsx"):
+def save_to_excel(df, file_name=None):
     try:
-        # Simpan langsung di direktori saat ini (web/)
-        df.to_excel(file_name, index=False)
-        print(f"Hasil clustering disimpan dalam {os.path.abspath(file_name)}")
+        # Generate filename with timestamp if not provided
+        if file_name is None:
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            file_name = f"hasil_simulasi_{timestamp}.xlsx"
+        
+        # Make sure we're saving in the hasil_simulasi directory
+        hasil_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hasil_simulasi")
+        
+        # Create the directory if it doesn't exist
+        if not os.path.exists(hasil_dir):
+            os.makedirs(hasil_dir)
+            
+        full_path = os.path.join(hasil_dir, file_name)
+        
+        # Sort data by date (tahun) before saving
+        if 'tahun' in df.columns:
+            df = df.sort_values(by=['tahun', 'wilayah', 'nama_obat'])
+            
+        # Save to Excel
+        df.to_excel(full_path, index=False)
+        print(f"Hasil clustering disimpan dalam {os.path.abspath(full_path)}")
+        return file_name
     except Exception as e:
         print(f"Gagal menyimpan file: {e}")
+        return None
 
 # Load hasil clustering dari file jika sudah ada
 def load_existing_clustering(file_name="hasil_simulasi.xlsx"):
+    # If file_name doesn't contain a path, check in hasil_simulasi directory
+    if not os.path.dirname(file_name):
+        hasil_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hasil_simulasi")
+        full_path = os.path.join(hasil_dir, file_name)
+        if os.path.exists(full_path):
+            file_name = full_path
+    
     if not os.path.exists(file_name):
-        return None
+        # If the file still doesn't exist, check for default file
+        default_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hasil_simulasi.xlsx")
+        if os.path.exists(default_file):
+            file_name = default_file
+        else:
+            default_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hasil_simulasi.csv")
+            if os.path.exists(default_csv):
+                file_name = default_csv
+            else:
+                return None
 
     df = None
     try:
@@ -128,6 +165,24 @@ def load_existing_clustering(file_name="hasil_simulasi.xlsx"):
             print(f"Gagal total memuat data dari {file_name}: {e2}")
 
     return None
+
+# Function to get a list of saved simulation files
+def get_saved_simulation_files():
+    hasil_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hasil_simulasi")
+    
+    # Create the directory if it doesn't exist
+    if not os.path.exists(hasil_dir):
+        os.makedirs(hasil_dir)
+        return []
+    
+    # Get all Excel files in the directory
+    files = [f for f in os.listdir(hasil_dir) if f.endswith('.xlsx') and f.startswith('hasil_simulasi_')]
+    
+    # Sort files by date (newest first)
+    files.sort(reverse=True)
+    
+    # Return full paths
+    return [{'name': f, 'path': os.path.join(hasil_dir, f), 'date': f.split('_')[2:4]} for f in files]
 # Fungsi untuk menghitung dan membuat plot frekuensi tingkat kebutuhan per tahun
 def prepare_frequencies_for_echarts(df):
     if df is None or df.empty:
@@ -410,7 +465,105 @@ def fuzzy_c_means_clustering_with_iterations(df, n_clusters=5, m=2, error=0.005,
 # Rute untuk halaman simulasi
 @app.route('/simulasi', methods=['GET', 'POST'])
 def simulasi():
+    # Handle loading of previous results if requested
+    load_file = request.args.get('load_file')
+    if load_file:
+        df_clustered = load_existing_clustering(load_file)
+        if df_clustered is None:
+            flash(f'Gagal memuat file simulasi: {load_file}', 'danger')
+            return redirect(url_for('simulasi'))
+            
+        # Get saved files for selection
+        saved_files = get_saved_simulation_files()
+        
+        # Calculate t-SNE for visualization if not present
+        if 'tsne_x' not in df_clustered.columns or 'tsne_y' not in df_clustered.columns:
+            features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+            data = df_clustered[features].values
+            tsne = TSNE(n_components=2, perplexity=min(5, len(df_clustered) - 1), random_state=42, n_iter=300)
+            tsne_results = tsne.fit_transform(data)
+            df_clustered['tsne_x'] = tsne_results[:, 0]
+            df_clustered['tsne_y'] = tsne_results[:, 1]
+            
+        # Process for display
+        final_tsne_json = prepare_tsne_data_for_echarts(df_clustered)
+        frequencies_json = prepare_frequencies_for_echarts(df_clustered)
+        
+        flash(f'Berhasil memuat hasil simulasi dari: {load_file}', 'success')
+        return render_template('simulasi.html',
+                           clusters=df_clustered.to_dict(orient='records'),
+                           parameters={'n_clusters': 5, 'm': 2, 'error': 0.005, 'maxiter': 100},
+                           uploaded_filename=load_file,
+                           iterations=[],
+                           data_preview=True,
+                           final_tsne_json=final_tsne_json,
+                           frequencies_json=frequencies_json,
+                           saved_files=saved_files)
+        
     if request.method == 'POST':
+        # Check if this is upload from "Load Data Tersimpan" tab
+        mode = request.args.get('mode')
+        if mode == 'load':
+            # Handle file upload with format seperti hasil_simulasi.csv
+            format_file = request.files.get('format_file')
+            if not format_file or not format_file.filename:
+                flash('File tidak diunggah. Silakan unggah file dengan format yang sesuai.', 'danger')
+                return redirect(url_for('simulasi'))
+                
+            file_name = format_file.filename
+            try:
+                # Attempt to read file based on extension
+                if file_name.endswith('.csv'):
+                    df_clustered = pd.read_csv(format_file, sep=';', decimal=',')
+                else:  # Try as Excel
+                    df_clustered = pd.read_excel(format_file)
+                    
+                # Verify required columns exist
+                required_columns = ['id', 'nama_obat', 'satuan', 'stok_awal', 'penerimaan', 'persediaan', 
+                                 'pemakaian', 'sisa_stok', 'permintaan', 'wilayah', 'tahun', 'cluster']
+                
+                # If there are missing columns, reject the file
+                missing_columns = [col for col in required_columns if col not in df_clustered.columns]
+                if missing_columns:
+                    flash(f'Format file tidak sesuai. Kolom yang tidak ditemukan: {", ".join(missing_columns)}', 'danger')
+                    return redirect(url_for('simulasi'))
+                    
+                # Check for tsne_x and tsne_y, calculate if missing
+                if 'tsne_x' not in df_clustered.columns or 'tsne_y' not in df_clustered.columns:
+                    features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+                    data = df_clustered[features].values
+                    tsne = TSNE(n_components=2, perplexity=min(5, len(df_clustered) - 1), random_state=42, n_iter=300)
+                    tsne_results = tsne.fit_transform(data)
+                    df_clustered['tsne_x'] = tsne_results[:, 0]
+                    df_clustered['tsne_y'] = tsne_results[:, 1]
+                    
+                # Check for kategori column, set to default if missing
+                if 'kategori' not in df_clustered.columns:
+                    df_clustered['kategori'] = 'Tidak Terkategori'
+                
+                # Get saved files for selection
+                saved_files = get_saved_simulation_files()
+                
+                # Process for display
+                final_tsne_json = prepare_tsne_data_for_echarts(df_clustered)
+                frequencies_json = prepare_frequencies_for_echarts(df_clustered)
+                
+                flash(f'Berhasil memuat data dari file: {file_name}', 'success')
+                return render_template('simulasi.html',
+                                   clusters=df_clustered.to_dict(orient='records'),
+                                   parameters={'n_clusters': 5, 'm': 2, 'error': 0.005, 'maxiter': 100},
+                                   uploaded_filename=file_name,
+                                   iterations=[],
+                                   data_preview=True,
+                                   final_tsne_json=final_tsne_json,
+                                   frequencies_json=frequencies_json,
+                                   saved_files=saved_files)
+                                   
+            except Exception as e:
+                flash(f'Gagal memproses file: {str(e)}', 'danger')
+                return redirect(url_for('simulasi'))
+        
+        # Normal simulation flow for Upload New Data tab
         n_clusters = int(request.form.get('n_clusters', 5))
         m = float(request.form.get('m', 2))
         error = float(request.form.get('error', 0.005))
