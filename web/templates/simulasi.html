@@ -584,38 +584,45 @@
                     if (!data || Object.keys(data).length === 0) return;
                     
                     // Group clusters by wilayah and tahun for popup content
-                    const wilayahData = {};
-                    {% for cluster in clusters %}
-                    const wilayah = "{{ cluster.wilayah }}";
-                    const tahun = "{{ cluster.tahun }}";
-                    const kategori = "{{ cluster.kategori }}";
-                    const cluster_id = "{{ cluster.cluster }}";
+                    const regionData = {};
+                    // Declare variables once outside the loop
+                    let regionName, tahun, kategori, cluster_id;
                     
-                    if (!wilayahData[wilayah]) {
-                        wilayahData[wilayah] = {};
+                    {% for cluster in clusters %}
+                    // Just assign values without redeclaring
+                    regionName = "{{ cluster.wilayah }}";
+                    tahun = "{{ cluster.tahun }}";
+                    kategori = "{{ cluster.kategori }}";
+                    cluster_id = "{{ cluster.cluster }}";
+                    
+                    if (!regionData[regionName]) {
+                        regionData[regionName] = {};
                     }
-                    if (!wilayahData[wilayah][tahun]) {
-                        wilayahData[wilayah][tahun] = {};
+                    if (!regionData[regionName][tahun]) {
+                        regionData[regionName][tahun] = {};
                     }
-                    if (!wilayahData[wilayah][tahun][kategori]) {
-                        wilayahData[wilayah][tahun][kategori] = 0;
+                    if (!regionData[regionName][tahun][kategori]) {
+                        regionData[regionName][tahun][kategori] = 0;
                     }
-                    wilayahData[wilayah][tahun][kategori]++;
+                    regionData[regionName][tahun][kategori]++;
                     {% endfor %}
                     
                     // Add markers for each wilayah with coordinates
-                    Object.entries(data).forEach(([nama, coordinates]) => {
-                        if (!coordinates || coordinates.length < 2) return;
-                        let [lat, lon] = coordinates;
+                    Object.entries(data).forEach(([nama, data]) => {
+                        // Handle new data structure with nested coordinates
+                        const coordinatesArray = data.coordinates || data;
+                        
+                        if (!coordinatesArray || !Array.isArray(coordinatesArray) || coordinatesArray.length < 2) return;
+                        let [lat, lon] = coordinatesArray;
                         
                         // Skip if we don't have data for this location
-                        if (!wilayahData[nama]) return;
+                        if (!regionData[nama]) return;
                         
                         let marker = L.marker([lat, lon]).addTo(map);
                         let popupContent = `<div class="font-sans"><strong>${nama}</strong><hr class="my-1">`;
                         
                         // Add data for each year
-                        Object.entries(wilayahData[nama]).forEach(([tahun, categories]) => {
+                        Object.entries(regionData[nama]).forEach(([tahun, categories]) => {
                             popupContent += `<div class="my-1"><strong>Tahun ${tahun}:</strong></div><ul class="list-disc list-inside text-xs">`;
                             Object.entries(categories).forEach(([kategori, count]) => {
                                 popupContent += `<li>${kategori}: ${count} obat</li>`;
