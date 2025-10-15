@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
+from functools import wraps
 import pandas as pd
 import numpy as np
 import skfuzzy as fuzz
@@ -20,6 +21,15 @@ app.config['SESSION_TYPE'] = 'filesystem'  # Simpan session di server
 app.config['SESSION_PERMANENT'] = False
 
 Session(app)
+
+# Decorator untuk memerlukan login
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Load data dari Excel
 def load_data(file_path):
@@ -330,7 +340,34 @@ def prepare_tsne_for_echarts(df):
         'series': series_data
     }
 
-@app.route('/')
+# Rute untuk halaman login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # Kredensial statis admin/admin
+        if username == 'admin' and password == 'admin':
+            session['logged_in'] = True
+            session['username'] = username
+            flash('Login berhasil!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Username atau password salah!', 'danger')
+    
+    return render_template('login.html')
+
+# Rute untuk logout
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    flash('Anda telah berhasil logout!', 'info')
+    return redirect(url_for('login'))
+
+@app.route('/dashboard')
+@login_required
 def index():
     simulasi_file = "hasil_simulasi.xlsx"  # Sesuaikan dengan nama file yang benar
 
@@ -357,6 +394,7 @@ def index():
 
 
 @app.route('/api/coordinates', methods=['GET'])
+@login_required
 def get_coordinates():
     file_path = "coordinates.json"
     if not os.path.exists(file_path):
@@ -464,6 +502,7 @@ def fuzzy_c_means_clustering_with_iterations(df, n_clusters=5, m=2, error=0.005,
 
 # Rute untuk halaman simulasi
 @app.route('/simulasi', methods=['GET', 'POST'])
+@login_required
 def simulasi():
     # Handle loading of previous results if requested
     load_file = request.args.get('load_file')
@@ -644,6 +683,7 @@ def simulasi():
         return render_template("simulasi.html", parameters=default_parameters, clusters=[], final_tsne_json='{}', data_preview=None, uploaded_filename=None)
 
 @app.route('/reset', methods=['POST'])
+@login_required
 def reset_simulation():
     # Hapus file jika ada
     file_path = 'hasil_simulasi.xlsx'
@@ -662,6 +702,11 @@ def reset_simulation():
         flash('Tidak ada yang perlu direset.', 'info')
         
     return redirect(url_for('simulasi'))
+
+# Rute default untuk mengarahkan ke login
+@app.route('/')
+def root():
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
