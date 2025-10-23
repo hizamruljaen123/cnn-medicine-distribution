@@ -352,7 +352,7 @@ def login():
             session['logged_in'] = True
             session['username'] = username
             flash('Login berhasil!', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('simulasi'))
         else:
             flash('Username atau password salah!', 'danger')
     
@@ -366,9 +366,9 @@ def logout():
     flash('Anda telah berhasil logout!', 'info')
     return redirect(url_for('login'))
 
-@app.route('/dashboard')
+@app.route('/statistic')
 @login_required
-def index():
+def statistic():
     simulasi_file = "hasil_simulasi.xlsx"  # Sesuaikan dengan nama file yang benar
 
     # Coba baca hasil dari simulasi
