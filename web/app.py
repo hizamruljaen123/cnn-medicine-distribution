@@ -446,10 +446,10 @@ def fuzzy_c_means_clustering_with_iterations(df, n_clusters=5, m=2, error=0.005,
         u0 = u.copy()
 
         # Update keanggotaan (calculate_u_and_d)
-        # Hitung jarak Euclidean antara data dan pusat cluster
+        # Hitung jarak Manhattan antara data dan pusat cluster
         d = np.zeros((n_clusters, data.shape[1]))
         for j in range(n_clusters):
-            d[j] = np.sqrt(np.sum((data - np.atleast_2d(cntr[j]).T) ** 2, axis=0))
+            d[j] = np.sum(np.abs(data - np.atleast_2d(cntr[j]).T), axis=0)
 
         # Hitung matriks keanggotaan baru
         u = np.zeros((n_clusters, data.shape[1]))
