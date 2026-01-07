@@ -13,6 +13,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.manifold import TSNE
+from sklearn.metrics import davies_bouldin_score
 
 
 app = Flask(__name__)
@@ -340,6 +341,49 @@ def prepare_tsne_for_echarts(df):
         'series': series_data
     }
 
+
+def compute_dbi(df, features, label_col='cluster'):
+    """
+    Hitung Davies-Bouldin Index (DBI). Mengembalikan float atau None jika tidak bisa dihitung.
+    """
+    try:
+        # Pastikan kolom label ada
+        if label_col not in df.columns:
+            return None
+        if df.empty:
+            return None
+        labels = df[label_col].values
+        # Perlu paling tidak 2 cluster berbeda
+        if len(np.unique(labels)) < 2:
+            return None
+        X = df[features].values
+        return float(davies_bouldin_score(X, labels))
+    except Exception as e:
+        print(f"Gagal menghitung DBI: {e}")
+        return None
+
+
+def compute_dbi_per_group(df, features, group_col='tahun'):
+    """
+    Hitung DBI per grup (misalnya per tahun) dan kembalikan dict {group: dbi_or_none}
+    """
+    results = {}
+    try:
+        if group_col not in df.columns:
+            return results
+        for group, gdf in df.groupby(group_col):
+            try:
+                # hanya hitung jika ada minimal 2 cluster berbeda
+                dbi_val = compute_dbi(gdf, features)
+                results[group] = dbi_val
+            except Exception as e:
+                print(f"Gagal menghitung DBI untuk grup {group}: {e}")
+                results[group] = None
+        return results
+    except Exception as e:
+        print(f"Gagal menghitung DBI per grup: {e}")
+        return {}
+
 # Rute untuk halaman login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -379,18 +423,24 @@ def statistic():
         flash('File hasil_simulasi.xlsx tidak ditemukan. Silakan jalankan simulasi terlebih dahulu.', 'warning')
         return render_template("index.html", 
                                clusters=[], 
-                               plot_tsne_json='{}', 
-                               plot_frequencies_json='{}')
+                               echarts_tsne_json='{}', 
+                               echarts_freq_json='{}',
+                               dbi_score=None)
 
     # Siapkan data untuk ECharts
     echarts_tsne_json = json.dumps(prepare_tsne_for_echarts(df_simulasi))
     echarts_freq_json = json.dumps(prepare_frequencies_for_echarts(df_simulasi))
 
+    # Compute DBI
+    features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+    dbi_score = compute_dbi(df_simulasi, features)
+
     # Kirim data ke template
     return render_template("index.html", 
                            clusters=df_simulasi.to_dict(orient='records'), 
                            echarts_tsne_json=echarts_tsne_json,
-                           echarts_freq_json=echarts_freq_json)
+                           echarts_freq_json=echarts_freq_json,
+                           dbi_score=dbi_score)
 
 
 @app.route('/api/coordinates', methods=['GET'])
@@ -525,9 +575,16 @@ def simulasi():
             df_clustered['tsne_y'] = tsne_results[:, 1]
             
         # Process for display
-        final_tsne_json = prepare_tsne_data_for_echarts(df_clustered)
+            final_tsne_json = prepare_tsne_data_for_echarts(df_clustered)
         frequencies_json = prepare_frequencies_for_echarts(df_clustered)
         
+        # Compute DBI overall and per-year
+        features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+        dbi_score = compute_dbi(df_clustered, features)
+        dbi_per_year = compute_dbi_per_group(df_clustered, features, group_col='tahun')
+        dbi_table = [{'group': k, 'dbi': dbi_per_year[k]} for k in sorted(dbi_per_year.keys())]
+        dbi_table_json = json.dumps(dbi_table)
+
         flash(f'Berhasil memuat hasil simulasi dari: {load_file}', 'success')
         return render_template('simulasi.html',
                            clusters=df_clustered.to_dict(orient='records'),
@@ -537,7 +594,10 @@ def simulasi():
                            data_preview=True,
                            final_tsne_json=final_tsne_json,
                            frequencies_json=frequencies_json,
-                           saved_files=saved_files)
+                           saved_files=saved_files,
+                           dbi_score=dbi_score,
+                           dbi_table=dbi_table,
+                           dbi_table_json=dbi_table_json)
         
     if request.method == 'POST':
         # Check if this is upload from "Load Data Tersimpan" tab
@@ -587,6 +647,13 @@ def simulasi():
                 final_tsne_json = prepare_tsne_data_for_echarts(df_clustered)
                 frequencies_json = prepare_frequencies_for_echarts(df_clustered)
                 
+                # Compute DBI overall and per-year
+                features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+                dbi_score = compute_dbi(df_clustered, features)
+                dbi_per_year = compute_dbi_per_group(df_clustered, features, group_col='tahun')
+                dbi_table = [{'group': k, 'dbi': dbi_per_year[k]} for k in sorted(dbi_per_year.keys())]
+                dbi_table_json = json.dumps(dbi_table)
+
                 flash(f'Berhasil memuat data dari file: {file_name}', 'success')
                 return render_template('simulasi.html',
                                    clusters=df_clustered.to_dict(orient='records'),
@@ -596,7 +663,10 @@ def simulasi():
                                    data_preview=True,
                                    final_tsne_json=final_tsne_json,
                                    frequencies_json=frequencies_json,
-                                   saved_files=saved_files)
+                                   saved_files=saved_files,
+                                   dbi_score=dbi_score,
+                                   dbi_table=dbi_table,
+                                   dbi_table_json=dbi_table_json)
                                    
             except Exception as e:
                 flash(f'Gagal memproses file: {str(e)}', 'danger')
@@ -651,6 +721,13 @@ def simulasi():
         frequencies = count_frequencies(df_clustered)
         final_tsne_json = prepare_tsne_data_for_echarts(df_clustered.copy())
 
+        # Compute DBI for the final clustering (overall and per-year)
+        features = ['stok_awal', 'penerimaan', 'persediaan', 'pemakaian', 'sisa_stok', 'permintaan']
+        dbi_score = compute_dbi(df_clustered, features)
+        dbi_per_year = compute_dbi_per_group(df_clustered, features, group_col='tahun')
+        dbi_table = [{'group': k, 'dbi': dbi_per_year[k]} for k in sorted(dbi_per_year.keys())]
+        dbi_table_json = json.dumps(dbi_table)
+
         session['results'] = {
             'final_tsne_json': final_tsne_json,
             'clusters': df_clustered.to_dict(orient='records'),
@@ -658,7 +735,10 @@ def simulasi():
             'iterations': iteration_tables,
             'data_preview': df.head(10).to_html(classes='table table-striped w-full'),
             'parameters': {'n_clusters': n_clusters, 'm': m, 'error': error, 'maxiter': maxiter},
-            'uploaded_filename': file_name
+            'uploaded_filename': file_name,
+            'dbi_score': dbi_score,
+            'dbi_table': dbi_table,
+            'dbi_table_json': dbi_table_json
         }
         
         return redirect(url_for('simulasi'))
@@ -674,7 +754,10 @@ def simulasi():
             final_tsne_json=results.get('final_tsne_json', '{}'),
             data_preview=results['data_preview'],
             parameters=results['parameters'],
-            uploaded_filename=results['uploaded_filename']
+            uploaded_filename=results['uploaded_filename'],
+            dbi_score=results.get('dbi_score'),
+            dbi_table=results.get('dbi_table', []),
+            dbi_table_json=results.get('dbi_table_json', '[]')
         )
     else:
         default_parameters = {
